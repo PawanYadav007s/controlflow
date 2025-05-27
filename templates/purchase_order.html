@@ -1,0 +1,111 @@
+{% extends 'layout.html' %}
+
+{% block title %}Purchase Orders | ControlFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Purchase Orders</h2>
+
+<!-- Create PO Form -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-warning text-dark">New Purchase Order</div>
+    <div class="card-body">
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Sales Order Reference</label>
+                    <select class="form-select">
+                        <option selected disabled>Select Sales Order</option>
+                        <option value="1">SO-0001 - Rooftop Solar Project</option>
+                        <!-- Dynamic later -->
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Purchase Order Date</label>
+                    <input type="date" class="form-control">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Supplier Name</label>
+                    <input type="text" class="form-control" placeholder="e.g., SolarMart Suppliers">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Vendor Contact</label>
+                    <input type="text" class="form-control" placeholder="Phone / Email">
+                </div>
+            </div>
+
+            <!-- Material List -->
+            <h5 class="mt-4">Material List</h5>
+            <div class="table-responsive mb-3">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Serial No</th>
+                            <th>Material Name</th>
+                            <th>Quantity</th>
+                            <th>Brand</th>
+                            <th>Expected Delivery Date</th>
+                            <th>Unit Cost</th>
+                            <th>Total Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Static example row -->
+                        <tr>
+                            <td>1</td>
+                            <td><input type="text" class="form-control" value="Solar Panel 300W"></td>
+                            <td><input type="number" class="form-control" value="10"></td>
+                            <td><input type="text" class="form-control" value="SunVolt"></td>
+                            <td><input type="date" class="form-control"></td>
+                            <td><input type="number" class="form-control" value="4500"></td>
+                            <td><input type="number" class="form-control" value="45000"></td>
+                        </tr>
+                        <!-- Dynamic rows will be added later -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button type="submit" class="btn btn-warning">Save Purchase Order</button>
+        </form>
+    </div>
+</div>
+
+<!-- PO Table -->
+<div class="card shadow-sm">
+    <div class="card-header bg-light">Existing Purchase Orders</div>
+    <div class="card-body table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-secondary">
+                <tr>
+                    <th>#</th>
+                    <th>PO No</th>
+                    <th>Supplier</th>
+                    <th>SO Ref</th>
+                    <th>Date</th>
+                    <th>Total Cost</th>
+                    <th>Expected Delivery</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sample static row -->
+                <tr>
+                    <td>1</td>
+                    <td>PO-0001</td>
+                    <td>SolarMart</td>
+                    <td>SO-0001</td>
+                    <td>2025-05-26</td>
+                    <td>₹45,000</td>
+                    <td>2025-06-01</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

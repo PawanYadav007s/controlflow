@@ -1,0 +1,103 @@
+{% extends 'layout.html' %}
+
+{% block title %}Inventory | ControlFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Inventory Management</h2>
+
+<!-- Add Inventory Entry -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-secondary text-white">Add Inventory Item</div>
+    <div class="card-body">
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">PO Reference Number</label>
+                    <input type="text" class="form-control" placeholder="e.g., PO-0001">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Material Name</label>
+                    <input type="text" class="form-control" placeholder="e.g., Solar Panel">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Material Category</label>
+                    <select class="form-select">
+                        <option>Raw Material</option>
+                        <option>Component</option>
+                        <option>Finished Goods</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Weight (kg)</label>
+                    <input type="number" class="form-control" step="0.01">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Storage Location</label>
+                    <input type="text" class="form-control" placeholder="e.g., Warehouse A - Rack 4">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Material Consumption</label>
+                    <input type="number" class="form-control" placeholder="e.g., 0">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Waste</label>
+                    <input type="number" class="form-control" placeholder="e.g., 0">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-secondary">Save Inventory</button>
+        </form>
+    </div>
+</div>
+
+<!-- Inventory Table -->
+<div class="card shadow-sm">
+    <div class="card-header bg-light">Current Inventory</div>
+    <div class="card-body table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-secondary">
+                <tr>
+                    <th>#</th>
+                    <th>Material</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Weight (kg)</th>
+                    <th>Consumed</th>
+                    <th>Waste</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Example static row -->
+                <tr>
+                    <td>1</td>
+                    <td>Solar Panel 300W</td>
+                    <td>Component</td>
+                    <td>9</td>
+                    <td>180.00</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>Warehouse A - Rack 4</td>
+                    <td><span class="badge bg-success">In Stock</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'layout.html' %}
+
+{% block title %}Quotations | ControlFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Quotations</h2>
+
+<!-- Add Quotation Form -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-primary text-white">Add New Quotation</div>
+    <div class="card-body">
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Quotation Number</label>
+                    <input type="text" class="form-control" placeholder="QUO-00123">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Quotation Date</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Validity Period</label>
+                    <input type="date" class="form-control">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Project Name</label>
+                <input type="text" class="form-control" placeholder="Example: Solar Panel Installation">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Project Description & Scope</label>
+                <textarea class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Estimated Cost</label>
+                    <input type="number" class="form-control" placeholder="INR">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Discount (%)</label>
+                    <input type="number" class="form-control" placeholder="Optional">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tax (%)</label>
+                    <input type="number" class="form-control" placeholder="e.g., 18%">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Status</label>
+                <select class="form-select">
+                    <option selected>Pending</option>
+                    <option>Accepted</option>
+                    <option>Rejected</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">Save Quotation</button>
+        </form>
+    </div>
+</div>
+
+<!-- Quotations Table -->
+<div class="card shadow-sm">
+    <div class="card-header bg-light">Existing Quotations</div>
+    <div class="card-body table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-secondary">
+                <tr>
+                    <th>#</th>
+                    <th>Quotation No</th>
+                    <th>Project Name</th>
+                    <th>Estimated Cost</th>
+                    <th>Status</th>
+                    <th>Quotation Date</th>
+                    <th>Validity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sample static row; will be dynamic later -->
+                <tr>
+                    <td>1</td>
+                    <td>QUO-00123</td>
+                    <td>Solar Installation</td>
+                    <td>₹1,50,000</td>
+                    <td><span class="badge bg-warning text-dark">Pending</span></td>
+                    <td>2025-05-26</td>
+                    <td>2025-06-10</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </td>
+                </tr>
+                <!-- Add more rows dynamically later -->
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

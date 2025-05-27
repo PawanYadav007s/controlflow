@@ -1,0 +1,97 @@
+{% extends 'layout.html' %}
+
+{% block title %}Sales Orders | ControlFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Sales Orders</h2>
+
+<!-- Add Sales Order Form -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-success text-white">Create Sales Order</div>
+    <div class="card-body">
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Quotation Reference</label>
+                    <select class="form-select">
+                        <option selected disabled>Select Quotation</option>
+                        <option value="1">QUO-00123 - Solar Installation</option>
+                        <!-- Dynamic options later -->
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Sales Order Date</label>
+                    <input type="date" class="form-control">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Project Name</label>
+                <input type="text" class="form-control" placeholder="Example: Rooftop Solar Project">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Project Details</label>
+                <textarea class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Client Approval Status</label>
+                    <select class="form-select">
+                        <option selected>Approved</option>
+                        <option>Pending</option>
+                        <option>Rejected</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Payment Terms</label>
+                    <input type="text" class="form-control" placeholder="e.g., 50% advance">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Delivery Schedule</label>
+                    <input type="date" class="form-control">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success">Create Sales Order</button>
+        </form>
+    </div>
+</div>
+
+<!-- Sales Orders Table -->
+<div class="card shadow-sm">
+    <div class="card-header bg-light">All Sales Orders</div>
+    <div class="card-body table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Quotation Ref</th>
+                    <th>Project Name</th>
+                    <th>Approval Status</th>
+                    <th>SO Date</th>
+                    <th>Delivery</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sample static row -->
+                <tr>
+                    <td>1</td>
+                    <td>QUO-00123</td>
+                    <td>Rooftop Solar Project</td>
+                    <td><span class="badge bg-success">Approved</span></td>
+                    <td>2025-05-26</td>
+                    <td>2025-06-15</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </td>
+                </tr>
+                <!-- More dynamic rows will go here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

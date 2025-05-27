@@ -1,0 +1,107 @@
+{% extends 'layout.html' %}
+
+{% block title %}Dashboard | ControlFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">ControlFlow Dashboard</h2>
+
+<!-- Top Metrics Cards -->
+<div class="row mb-4 g-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 bg-light rounded-4 p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Quotations</p>
+                    <h4 class="fw-bold mb-0">18</h4>
+                    <small>3 Pending / 12 Accepted</small>
+                </div>
+                <div class="text-primary fs-2">
+                    📄
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 bg-light rounded-4 p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Sales Orders</p>
+                    <h4 class="fw-bold mb-0">11</h4>
+                    <small>5 Delivered / 6 Open</small>
+                </div>
+                <div class="text-success fs-2">
+                    🧾
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 bg-light rounded-4 p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Purchase Orders</p>
+                    <h4 class="fw-bold mb-0">22</h4>
+                    <small>4 Pending</small>
+                </div>
+                <div class="text-warning fs-2">
+                    📦
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 bg-light rounded-4 p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Inventory Items</p>
+                    <h4 class="fw-bold mb-0">842</h4>
+                    <small>Updated as of today</small>
+                </div>
+                <div class="text-secondary fs-2">
+                    🏷️
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Row -->
+<div class="row g-4">
+    <!-- Inventory Summary -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white fw-bold">Inventory Overview</div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Raw Materials <span class="badge bg-primary rounded-pill">450</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Components <span class="badge bg-success rounded-pill">300</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Finished Goods <span class="badge bg-dark text-white rounded-pill">90</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Production Overview -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white fw-bold">Production Summary</div>
+            <div class="card-body">
+                <p><strong>Last Batch:</strong> <span class="text-muted">PROD-002</span></p>
+                <p><strong>Materials Used:</strong> <span class="text-muted">10 Panels, 2 Frames</span></p>
+                <p><strong>Waste:</strong> <span class="text-danger">1 Panel</span> &nbsp;&nbsp;
+                   <strong>Scrap:</strong> <span class="text-warning">0.5 kg</span></p>
+                <a href="{{ url_for('production') }}" class="btn btn-outline-dark btn-sm mt-2">View All Production</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
