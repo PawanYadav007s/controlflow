@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>{% block title %}ControlFlow{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- Local Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -21,50 +21,50 @@
 <!-- Sidebar + Content -->
 <div class="container-fluid">
     <div class="row">
-        
+
         <!-- Sidebar -->
         <nav id="sidebarMenu" class="col-md-2 d-md-block bg-white shadow-sm vh-100 position-fixed border-end">
             <div class="d-flex flex-column h-100 px-3 pt-4">
                 <h4 class="fw-bold mb-4 text-primary">ControlFlow</h4>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('index') }}">
+                        <a class="nav-link sidebar-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('base_routes.index') }}">
                             <span class="icon text-primary">📊</span>
                             Dashboard
                         </a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/quotation' %}active{% endif %}" href="{{ url_for('quotation') }}">
+                        <a class="nav-link sidebar-link {% if request.path == '/quotation' %}active{% endif %}" href="{{ url_for('base_routes.quotation') }}">
                             <span class="icon text-success">📝</span>
                             Quotations
                         </a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/sales-order' %}active{% endif %}" href="{{ url_for('sales_order') }}">
+                        <a class="nav-link sidebar-link {% if request.path == '/sales-order' %}active{% endif %}" href="{{ url_for('base_routes.sales_order') }}">
                             <span class="icon text-warning">🧾</span>
                             Sales Orders
                         </a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/purchase-order' %}active{% endif %}" href="{{ url_for('purchase_order') }}">
+                        <a class="nav-link sidebar-link {% if request.path == '/purchase-order' %}active{% endif %}" href="{{ url_for('base_routes.purchase_order') }}">
                             <span class="icon text-danger">📦</span>
                             Purchase Orders
                         </a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/material-receipt' %}active{% endif %}" href="{{ url_for('material_receipt') }}">
+                        <a class="nav-link sidebar-link {% if request.path == '/material-receipt' %}active{% endif %}" href="{{ url_for('base_routes.material_receipt') }}">
                             <span class="icon text-info">📥</span>
                             Material Receipt
                         </a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/inventory' %}active{% endif %}" href="{{ url_for('inventory') }}">
+                        <a class="nav-link sidebar-link {% if request.path == '/inventory' %}active{% endif %}" href="{{ url_for('base_routes.inventory') }}">
                             <span class="icon text-dark">🏷️</span>
                             Inventory
                         </a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/production' %}active{% endif %}" href="{{ url_for('production') }}">
+                        <a class="nav-link sidebar-link {% if request.path == '/production' %}active{% endif %}" href="{{ url_for('base_routes.production') }}">
                             <span class="icon text-secondary">🏭</span>
                             Production
                         </a>
