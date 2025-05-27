@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% block title %}Edit Quotation | ControlFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Edit Quotation</h2>
+
+<form method="POST" action="{{ url_for('quotation_routes.edit_quotation', id=quotation.id) }}">
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Quotation Number</label>
+      <input type="text" class="form-control" name="quotation_number" value="{{ quotation.quotation_number }}" required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Quotation Date</label>
+      <input type="date" class="form-control" name="quotation_date" value="{{ quotation.quotation_date.strftime('%Y-%m-%d') }}" required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Client Name</label>
+      <input type="text" class="form-control" name="client_name" value="{{ quotation.client_name }}" required>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Project Name</label>
+    <input type="text" class="form-control" name="project_name" value="{{ quotation.project_name }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Project Description & Scope</label>
+    <textarea class="form-control" name="project_description" rows="3" required>{{ quotation.project_description }}</textarea>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Estimated Cost (INR)</label>
+    <input type="number" class="form-control" step="0.01" name="estimated_cost" value="{{ quotation.estimated_cost }}" required>
+  </div>
+
+  <button type="submit" class="btn btn-success">Update</button>
+  <a href="{{ url_for('quotation_routes.manage_quotations') }}" class="btn btn-secondary ms-2">Back</a>
+</form>
+{% endblock %}

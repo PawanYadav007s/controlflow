@@ -28,16 +28,26 @@
                 <h4 class="fw-bold mb-4 text-primary">ControlFlow</h4>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('base_routes.index') }}">
+                        <a class="nav-link sidebar-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('base_routes.dashboard') }}">
                             <span class="icon text-primary">📊</span>
                             Dashboard
                         </a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/quotation' %}active{% endif %}" href="{{ url_for('base_routes.quotation') }}">
-                            <span class="icon text-success">📝</span>
-                            Quotations
+                       <!-- Inside the sidebar -->
+
+<a class="nav-link sidebar-link {% if request.path.startswith('/quotation/manage') %}active{% endif %}" href="{{ url_for('quotation_routes.manage_quotations') }}">
+    <span class="icon text-primary">📋</span>
+    Manage Quotations
+</a>
+
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path == '/purchase-order' %}active{% endif %}" href="{{ url_for('base_routes.purchase_order') }}">
+                            <span class="icon text-danger">📦</span>
+                            Manage Purchase Orders
                         </a>
+                    </li>
+
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link sidebar-link {% if request.path == '/sales-order' %}active{% endif %}" href="{{ url_for('base_routes.sales_order') }}">
@@ -45,12 +55,7 @@
                             Sales Orders
                         </a>
                     </li>
-                    <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/purchase-order' %}active{% endif %}" href="{{ url_for('base_routes.purchase_order') }}">
-                            <span class="icon text-danger">📦</span>
-                            Purchase Orders
-                        </a>
-                    </li>
+
                     <li class="nav-item mb-2">
                         <a class="nav-link sidebar-link {% if request.path == '/material-receipt' %}active{% endif %}" href="{{ url_for('base_routes.material_receipt') }}">
                             <span class="icon text-info">📥</span>

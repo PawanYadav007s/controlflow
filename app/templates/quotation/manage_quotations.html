@@ -1,0 +1,94 @@
+{% extends 'layout.html' %}
+
+{% block title %}Manage Quotations | ControlFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Manage Quotations</h2>
+
+<a href="{{ url_for('quotation_routes.add_quotation') }}" class="btn btn-primary mb-3">Add New Quotation</a>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<form method="GET" action="{{ url_for('quotation_routes.manage_quotations') }}" class="mb-3">
+  <input type="text" name="search" class="form-control" placeholder="Search by project or client..." value="{{ request.args.get('search', '') }}">
+</form>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>Quotation No</th>
+        <th>Project</th>
+        <th>Client</th>
+        <th>Cost</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for q in quotations.items %}
+      <tr>
+        <td>{{ loop.index + (quotations.page - 1) * quotations.per_page }}</td>
+        <td>{{ q.quotation_number }}</td>
+        <td>{{ q.project_name }}</td>
+        <td>{{ q.client_name }}</td>
+        <td>₹{{ q.estimated_cost }}</td>
+        <td>
+          <span class="badge bg-{{ 'warning text-dark' if q.status == 'Pending' else 'success' if q.status == 'Accepted' else 'danger' }}">{{ q.status }}</span>
+        </td>
+        <td>{{ q.quotation_date.strftime('%Y-%m-%d') }}</td>
+        <td>
+          <a href="{{ url_for('quotation_routes.edit_quotation', id=q.id) }}" class="btn btn-sm btn-primary">Edit</a>
+          <form method="POST" action="{{ url_for('quotation_routes.delete_quotation', id=q.id) }}" style="display:inline-block;" onsubmit="return confirm('Are you sure?');">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    {% if quotations.has_prev %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('quotation_routes.manage_quotations', page=quotations.prev_num, search=request.args.get('search', '')) }}">Previous</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    {% for page_num in quotations.iter_pages() %}
+      {% if page_num %}
+        <li class="page-item {% if quotations.page == page_num %}active{% endif %}">
+          <a class="page-link" href="{{ url_for('quotation_routes.manage_quotations', page=page_num, search=request.args.get('search', '')) }}">{{ page_num }}</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if quotations.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('quotation_routes.manage_quotations', page=quotations.next_num, search=request.args.get('search', '')) }}">Next</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+
+{% endblock %}

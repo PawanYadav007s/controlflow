@@ -6,14 +6,18 @@
 <h2 class="mb-4">ControlFlow Dashboard</h2>
 
 <!-- Top Metrics Cards -->
-<div class="row mb-4 g-4">
+<!-- Quotations -->
+<!-- Top Metrics Cards -->
+<div class="row gx-4 gy-4 mb-4">
+
+    <!-- Quotations -->
     <div class="col-lg-3 col-md-6">
         <div class="card shadow-sm border-0 bg-light rounded-4 p-3 h-100">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <p class="text-muted mb-1">Quotations</p>
-                    <h4 class="fw-bold mb-0">18</h4>
-                    <small>3 Pending / 12 Accepted</small>
+                    <h4 class="fw-bold mb-0">{{ total_quotations }}</h4>
+                    <small>{{ pending_quotations }} Pending / {{ accepted_quotations }} Accepted</small>
                 </div>
                 <div class="text-primary fs-2">
                     📄
@@ -22,6 +26,7 @@
         </div>
     </div>
 
+    <!-- Sales Orders -->
     <div class="col-lg-3 col-md-6">
         <div class="card shadow-sm border-0 bg-light rounded-4 p-3 h-100">
             <div class="d-flex justify-content-between align-items-center">
@@ -37,6 +42,7 @@
         </div>
     </div>
 
+    <!-- Purchase Orders -->
     <div class="col-lg-3 col-md-6">
         <div class="card shadow-sm border-0 bg-light rounded-4 p-3 h-100">
             <div class="d-flex justify-content-between align-items-center">
@@ -52,6 +58,7 @@
         </div>
     </div>
 
+    <!-- Inventory Items -->
     <div class="col-lg-3 col-md-6">
         <div class="card shadow-sm border-0 bg-light rounded-4 p-3 h-100">
             <div class="d-flex justify-content-between align-items-center">
@@ -66,7 +73,9 @@
             </div>
         </div>
     </div>
-</div>
+
+
+
 
 <!-- Second Row -->
 <div class="row g-4">
