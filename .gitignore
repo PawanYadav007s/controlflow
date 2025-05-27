@@ -1,0 +1,42 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# VSCode settings
+.vscode/
+
+# Environment variables / secrets
+.env
+
+# Flask and database
+instance/
+*.sqlite3
+*.db
+
+# Logs
+*.log
+
+# Mac and Linux junk files
+.DS_Store
+Thumbs.db
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Migrations (optional: include if you're using Flask-Migrate and want to reset migrations)
+migrations/
+
+# Compiled static files (if using tools like Webpack)
+static/dist/
