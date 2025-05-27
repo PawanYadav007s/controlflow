@@ -4,87 +4,84 @@
     <meta charset="UTF-8">
     <title>{% block title %}ControlFlow{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    
     <!-- Local Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('index') }}">ControlFlow</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-    </nav>
 
-    <!-- Sidebar and Content -->
+<!-- Top Navbar -->
+<nav class="navbar navbar-dark bg-dark sticky-top shadow-sm">
     <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <!-- Sidebar -->
-<nav id="sidebarMenu" class="col-md-2 d-md-block bg-white border-end vh-100 position-fixed">
-    <div class="pt-3 px-3">
-        <h5 class="text-muted">ControlFlow</h5>
-        <ul class="nav flex-column mt-4">
-            <li class="nav-item mb-2">
-                <a class="nav-link d-flex align-items-center text-dark" href="{{ url_for('index') }}">
-                    📊 <span class="ms-2">Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link d-flex align-items-center text-dark" href="{{ url_for('quotation') }}">
-                    📝 <span class="ms-2">Quotations</span>
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link d-flex align-items-center text-dark" href="{{ url_for('sales_order') }}">
-                    🧾 <span class="ms-2">Sales Orders</span>
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link d-flex align-items-center text-dark" href="{{ url_for('purchase_order') }}">
-                    📦 <span class="ms-2">Purchase Orders</span>
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link d-flex align-items-center text-dark" href="{{ url_for('material_receipt') }}">
-                    📥 <span class="ms-2">Material Receipt</span>
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link d-flex align-items-center text-dark" href="{{ url_for('inventory') }}">
-                    🏷️ <span class="ms-2">Inventory</span>
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link d-flex align-items-center text-dark" href="{{ url_for('production') }}">
-                    🏭 <span class="ms-2">Production</span>
-                </a>
-            </li>
-        </ul>
+        <span class="navbar-brand mb-0 h1">ControlFlow</span>
     </div>
 </nav>
 
-
-            <!-- Main Content Area -->
-        <!-- Main Content Area -->
+<!-- Sidebar + Content -->
 <div class="container-fluid">
     <div class="row">
-        <!-- Content shifted to make space for sidebar -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 offset-md-2">
+        
+        <!-- Sidebar -->
+        <nav id="sidebarMenu" class="col-md-2 d-md-block bg-white shadow-sm vh-100 position-fixed border-end">
+            <div class="d-flex flex-column h-100 px-3 pt-4">
+                <h4 class="fw-bold mb-4 text-primary">ControlFlow</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('index') }}">
+                            <span class="icon text-primary">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path == '/quotation' %}active{% endif %}" href="{{ url_for('quotation') }}">
+                            <span class="icon text-success">📝</span>
+                            Quotations
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path == '/sales-order' %}active{% endif %}" href="{{ url_for('sales_order') }}">
+                            <span class="icon text-warning">🧾</span>
+                            Sales Orders
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path == '/purchase-order' %}active{% endif %}" href="{{ url_for('purchase_order') }}">
+                            <span class="icon text-danger">📦</span>
+                            Purchase Orders
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path == '/material-receipt' %}active{% endif %}" href="{{ url_for('material_receipt') }}">
+                            <span class="icon text-info">📥</span>
+                            Material Receipt
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path == '/inventory' %}active{% endif %}" href="{{ url_for('inventory') }}">
+                            <span class="icon text-dark">🏷️</span>
+                            Inventory
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path == '/production' %}active{% endif %}" href="{{ url_for('production') }}">
+                            <span class="icon text-secondary">🏭</span>
+                            Production
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 offset-md-2 px-md-4 py-4">
             {% block content %}
             {% endblock %}
         </main>
     </div>
 </div>
 
-
-    <!-- Local Bootstrap JS -->
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<!-- Local Bootstrap JS -->
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>
