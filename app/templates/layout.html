@@ -41,12 +41,7 @@
     Manage Quotations
 </a>
 
-                    <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/purchase-order' %}active{% endif %}" href="{{ url_for('base_routes.purchase_order') }}">
-                            <span class="icon text-danger">📦</span>
-                            Manage Purchase Orders
-                        </a>
-                    </li>
+
 
                     </li>
                     <li class="nav-item mb-2">
@@ -55,6 +50,15 @@
                             Sales Orders
                         </a>
                     </li>
+
+
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path == '/purchase-order' %}active{% endif %}" href="{{ url_for('base_routes.purchase_order') }}">
+                            <span class="icon text-danger">📦</span>
+                            Manage Purchase Orders
+                        </a>
+                    </li>
+
 
                     <li class="nav-item mb-2">
                         <a class="nav-link sidebar-link {% if request.path == '/material-receipt' %}active{% endif %}" href="{{ url_for('base_routes.material_receipt') }}">

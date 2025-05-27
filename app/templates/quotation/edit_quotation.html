@@ -36,6 +36,20 @@
     <input type="number" class="form-control" step="0.01" name="estimated_cost" value="{{ quotation.estimated_cost }}" required>
   </div>
 
+  <div class="row mb-3">
+  <div class="col-md-4">
+    <label class="form-label">Status</label>
+    <select class="form-select" name="status" required>
+      <option value="Pending" {% if quotation.status == 'Pending' %}selected{% endif %}>Pending</option>
+      <option value="Accepted" {% if quotation.status == 'Accepted' %}selected{% endif %}>Accepted</option>
+      <option value="Rejected" {% if quotation.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+    </select>
+  </div>
+</div>
+
+
+  
+
   <button type="submit" class="btn btn-success">Update</button>
   <a href="{{ url_for('quotation_routes.manage_quotations') }}" class="btn btn-secondary ms-2">Back</a>
 </form>

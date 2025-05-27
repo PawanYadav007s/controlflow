@@ -55,6 +55,8 @@ def edit_quotation(id):
             quotation.project_name = request.form['project_name']
             quotation.project_description = request.form['project_description']
             quotation.estimated_cost = request.form['estimated_cost']
+            quotation.status = request.form['status']
+
 
             try:
                 quotation.quotation_date = datetime.strptime(request.form['quotation_date'], '%Y-%m-%d').date()
