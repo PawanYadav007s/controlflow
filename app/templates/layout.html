@@ -45,7 +45,7 @@
 
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/sales-order' %}active{% endif %}" href="{{ url_for('base_routes.sales_order') }}">
+                        <a href="{{ url_for('sales_order_routes.manage_sales_orders') }}" class="btn btn-outline-primary w-100 mb-2">Manage Sales Orders</a>
                             <span class="icon text-warning">🧾</span>
                             Sales Orders
                         </a>

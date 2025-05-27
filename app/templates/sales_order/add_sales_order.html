@@ -1,0 +1,71 @@
+### add_sales_order.html
+
+{% extends 'layout.html' %}
+
+{% block title %}Add Sales Order | ControlFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Create Sales Order</h2>
+<form method="POST" action="{{ url_for('sales_order_routes.add_sales_order') }}">
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <label class="form-label">Quotation Reference</label>
+      <select class="form-select" name="quotation_id" id="quotation-select" required>
+        <option value="" selected disabled>Select Quotation</option>
+        {% for q in quotations %}
+          <option value="{{ q.id }}" data-project-name="{{ q.project_name }}">{{ q.quotation_number }} - {{ q.project_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Sales Order Date</label>
+      <input type="date" class="form-control" name="so_date" required>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Project Name</label>
+    <input type="text" class="form-control" name="project_name" id="project-name-input" placeholder="Project Name" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Project Details</label>
+    <textarea class="form-control" name="project_details" rows="3" required></textarea>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Client Approval Status</label>
+      <select class="form-select" name="approval_status" required>
+        <option>Approved</option>
+        <option>Pending</option>
+        <option>Rejected</option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Payment Terms</label>
+      <input type="text" class="form-control" name="payment_terms">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Delivery Schedule</label>
+      <input type="date" class="form-control" name="delivery_schedule">
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-success">Create Sales Order</button>
+  <a href="{{ url_for('sales_order_routes.manage_sales_orders') }}" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+
+
+
+
+
+<script>
+  document.getElementById('quotation-select').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const projectName = selectedOption.getAttribute('data-project-name') || '';
+    document.getElementById('project-name-input').value = projectName;
+  });
+</script>
+
+{% endblock %}

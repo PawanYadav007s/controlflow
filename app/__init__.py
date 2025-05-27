@@ -14,8 +14,11 @@ def create_app():
 
     from .routes.base_routes import base_routes
     from .routes.quotation_routes import quotation_routes
+    from app.routes.sales_order_routes import sales_order_routes
     app.register_blueprint(base_routes)
     app.register_blueprint(quotation_routes)
+    app.register_blueprint(sales_order_routes)
+
 
     with app.app_context():
         from . import models

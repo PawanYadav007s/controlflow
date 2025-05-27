@@ -1,0 +1,57 @@
+### edit_sales_order.html
+
+{% extends 'layout.html' %}
+
+{% block title %}Edit Sales Order | ControlFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Edit Sales Order</h2>
+<form method="POST">
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <label class="form-label">Quotation Reference</label>
+      <select class="form-select" name="quotation_id" required>
+        {% for quo in quotations %}
+        <option value="{{ quo.id }}" {% if quo.id == order.quotation_id %}selected{% endif %}>{{ quo.quotation_number }} - {{ quo.project_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Sales Order Date</label>
+      <input type="date" class="form-control" name="sales_order_date" value="{{ order.sales_order_date }}" required>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Project Name</label>
+    <input type="text" class="form-control" name="project_name" value="{{ order.project_name }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Project Details</label>
+    <textarea class="form-control" name="project_details" rows="3" required>{{ order.project_details }}</textarea>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Client Approval Status</label>
+      <select class="form-select" name="approval_status" required>
+        <option {% if order.approval_status == 'Approved' %}selected{% endif %}>Approved</option>
+        <option {% if order.approval_status == 'Pending' %}selected{% endif %}>Pending</option>
+        <option {% if order.approval_status == 'Rejected' %}selected{% endif %}>Rejected</option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Payment Terms</label>
+      <input type="text" class="form-control" name="payment_terms" value="{{ order.payment_terms }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Delivery Schedule</label>
+      <input type="date" class="form-control" name="delivery_schedule" value="{{ order.delivery_schedule }}">
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-success">Update</button>
+  <a href="{{ url_for('sales_order_routes.manage_sales_orders') }}" class="btn btn-secondary ms-2">Back</a>
+</form>
+{% endblock %}
