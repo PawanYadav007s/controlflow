@@ -64,3 +64,36 @@ def edit_sales_order(id):
         return redirect(url_for('sales_order_routes.manage_sales_orders'))
 
     return render_template('sales_order/edit_sales_order.html', sales_order=sales_order, quotations=quotations)
+
+
+@sales_order_routes.route('/sales-orders/delete/<int:id>', methods=['post'])
+def delete_sales_order(id):
+    try:
+        sales_order = SalesOrder.query.get_or_404(id)
+        db.session.delete(sales_order)
+        db.session.commit()
+        flash('Sales Order deleted Successfully', 'success')
+    except  Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting sales order: {str(e)}', 'danger')
+    return redirect(url_for('sales_order_routes.manage_sales_orders'))
+
+
+
+
+
+ 
+
+# # Handle Delete Quotation
+# @quotation_routes.route('/quotations/delete/<int:id>', methods=['POST'])
+# def delete_quotation(id):
+#     try:
+#         quotation = Quotation.query.get_or_404(id)
+#         db.session.delete(quotation)
+#         db.session.commit()
+#         flash('Quotation deleted successfully!', 'success')
+#     except Exception as e:
+#         db.session.rollback()
+#         flash(f'Error deleting quotation: {str(e)}', 'danger')
+
+#     return redirect(url_for('quotation_routes.manage_quotations'))
