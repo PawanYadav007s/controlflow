@@ -46,7 +46,7 @@
                     </li>
 
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/purchase-order' %}active{% endif %}" href="{{ url_for('base_routes.purchase_order') }}">
+                        <a class="nav-link sidebar-link {% if request.path.startswith('/purchase-order') %}active{% endif %}" href="{{ url_for('purchase_order_routes.manage_purchase_orders') }}">
                             <span class="icon text-danger">📦</span> Manage Purchase Orders
                         </a>
                     </li>

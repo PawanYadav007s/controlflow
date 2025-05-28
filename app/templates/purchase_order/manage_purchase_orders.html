@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+{% block title %}Purchase Orders | ControlFlow{% endblock %}
+{% block content %}
+<h2>Purchase Orders</h2>
+<a href="{{ url_for('purchase_order_routes.create_purchase_order') }}" class="btn btn-success mb-3">+ Add Purchase Order</a>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>PO Number</th>
+      <th>PO Date</th>
+      <th>Vendor</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Sales Order Ref</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for po in purchase_orders %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ po.po_number }}</td>
+      <td>{{ po.po_date }}</td>
+      <td>{{ po.vendor_name }}</td>
+      <td>{{ po.total_amount }}</td>
+      <td>{{ po.status }}</td>
+      <td>{{ po.sales_order.so_number }}</td>
+      <td>
+        <a href="{{ url_for('purchase_order_routes.edit_purchase_order', id=po.id) }}" class="btn btn-sm btn-primary">Edit</a>
+        <form action="{{ url_for('purchase_order_routes.delete_purchase_order', id=po.id) }}" method="POST" style="display:inline;">
+          <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

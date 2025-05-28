@@ -15,19 +15,7 @@ def dashboard():
                            pending_quotations=pending_quotations,
                            accepted_quotations=accepted_quotations)
 
-# Redirect old /quotation to new manage quotations route
-@base_routes.route('/quotation')
-def quotation():
-    return redirect(url_for('quotation_routes.manage_quotations'))
 
-# Static pages (still valid)
-@base_routes.route('/sales-order')
-def sales_order():
-    return render_template('sales_order.html')
-
-@base_routes.route('/purchase-order')
-def purchase_order():
-    return render_template('purchase_order.html')
 
 @base_routes.route('/material-receipt')
 def material_receipt():
