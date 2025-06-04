@@ -1,0 +1,63 @@
+<!-- templates/location/manage_locations.html -->
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Manage Locations</h2>
+<a href="{{ url_for('location.add_location') }}" class="btn btn-primary mb-2">Add New Location</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for loc in locations %}
+        <tr>
+            <td>{{ loc.name }}</td>
+            <td>{{ loc.description }}</td>
+            <td>
+                <a href="{{ url_for('location.edit_location', location_id=loc.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{{ url_for('location.delete_location', location_id=loc.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+<!-- templates/location/add_location.html -->
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Add Location</h2>
+<form method="POST">
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label>Description</label>
+        <input type="text" name="description" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="{{ url_for('location.manage_locations') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
+
+<!-- templates/location/edit_location.html -->
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Edit Location</h2>
+<form method="POST">
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" class="form-control" value="{{ location.name }}" required>
+    </div>
+    <div class="form-group">
+        <label>Description</label>
+        <input type="text" name="description" class="form-control" value="{{ location.description }}">
+    </div>
+    <button type="submit" class="btn btn-success">Update</button>
+    <a href="{{ url_for('location.manage_locations') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

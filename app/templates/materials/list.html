@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block title %}Materials{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Materials</h2>
+
+    <form method="get" action="{{ url_for('material_routes.list_materials') }}" class="form-inline mb-3">
+        <input type="text" name="q" class="form-control mr-2" placeholder="Search by name or code" value="{{ request.args.get('q', '') }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="{{ url_for('material_routes.add_material') }}" class="btn btn-success ml-3">Add Material</a>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Unit</th>
+                <th>Min Stock</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for material in materials %}
+            <tr>
+                <td>{{ material.code }}</td>
+                <td>{{ material.name }}</td>
+                <td>{{ material.category }}</td>
+                <td>{{ material.unit }}</td>
+                <td>{{ material.min_stock_level }}</td>
+                <td>
+                    <a href="{{ url_for('material_routes.edit_material', id=material.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                    <form action="{{ url_for('material_routes.delete_material', id=material.id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this material?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center">No materials found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

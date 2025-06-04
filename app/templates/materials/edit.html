@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}Edit Material{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Material</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Code</label>
+            <input type="text" name="code" class="form-control" value="{{ material.code }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" value="{{ material.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3">{{ material.description }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+            <input type="text" name="category" class="form-control" value="{{ material.category }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Unit</label>
+            <input type="text" name="unit" class="form-control" value="{{ material.unit }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Min Stock Level</label>
+            <input type="number" name="min_stock_level" step="0.01" class="form-control" value="{{ material.min_stock_level }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ url_for('material_routes.list_materials') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

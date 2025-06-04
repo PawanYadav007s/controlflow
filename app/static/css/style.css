@@ -69,3 +69,144 @@
 main {
     margin-left: 240px; /* Match sidebar width */
 }
+
+
+
+
+/* static/css/style.css */
+
+/* Import Bootstrap Icons if not already included */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
+
+/* Root Variables */
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #64748b;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --dark-color: #0f172a;
+    --light-bg: #f8fafc;
+    --border-color: #e2e8f0;
+    --sidebar-width: 260px;
+}
+
+/* Global Print Styles - VERY IMPORTANT */
+@media print {
+    /* Hide all UI elements */
+    .navbar,
+    #sidebarMenu,
+    .sidebar,
+    .no-print,
+    .btn,
+    .action-buttons,
+    .quick-actions,
+    .activity-section,
+    .chart-container,
+    button,
+    a.btn,
+    nav,
+    .alert,
+    .badge,
+    .metric-card a,
+    .breadcrumb {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* Reset layout for print */
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+    }
+    
+    main {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .container,
+    .container-fluid {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .row {
+        margin: 0 !important;
+    }
+    
+    .col-md-9,
+    .col-lg-10,
+    .offset-md-2 {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        position: static !important;
+    }
+    
+    /* Show only essential content */
+    .report-header,
+    .report-table,
+    .table,
+    .card-body {
+        display: block !important;
+        visibility: visible !important;
+    }
+    
+    /* Table styles for print */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+    
+    th, td {
+        border: 1px solid #000 !important;
+        padding: 8px !important;
+    }
+    
+    /* Ensure text is black */
+    * {
+        color: black !important;
+    }
+}
+
+/* Additional utility classes */
+.text-purple {
+    color: #8b5cf6 !important;
+}
+
+.bg-purple {
+    background-color: #8b5cf6 !important;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Loading spinner */
+.spinner-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+
+

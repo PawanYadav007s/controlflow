@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}Add Material{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Add Material</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Code</label>
+            <input type="text" name="code" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+            <input type="text" name="category" class="form-control" placeholder="e.g., Raw Material" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Unit</label>
+            <input type="text" name="unit" class="form-control" placeholder="kg, meter, pcs" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Min Stock Level</label>
+            <input type="number" name="min_stock_level" step="0.01" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="{{ url_for('material_routes.list_materials') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

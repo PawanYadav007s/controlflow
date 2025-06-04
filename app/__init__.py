@@ -16,13 +16,19 @@ def create_app():
     from .routes.quotation_routes import quotation_routes
     from .routes.sales_order_routes import sales_order_routes
     from .routes.purchase_order_routes import purchase_order_routes
-    from .routes.material_receipt_routes import material_receipt_routes  # ✅ Add this line
+    from .routes.material_receipt_routes import material_receipt_routes  
+    from app.routes.material_routes import material_bp
+    from app.routes.location_routes import location_routes
+
+
 
     app.register_blueprint(base_routes)
     app.register_blueprint(quotation_routes)
     app.register_blueprint(sales_order_routes)
     app.register_blueprint(purchase_order_routes)
     app.register_blueprint(material_receipt_routes)  # ✅ Register blueprint
+    app.register_blueprint(material_bp)
+    app.register_blueprint(location_routes)
 
     with app.app_context():
         from . import models

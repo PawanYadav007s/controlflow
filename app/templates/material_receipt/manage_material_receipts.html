@@ -14,6 +14,12 @@
         <div class="col-auto">
             <a href="{{ url_for('material_receipt_routes.export_material_receipts_csv') }}" class="btn btn-success">Export CSV</a>
         </div>
+        <div class="col-auto">
+            <!-- NEW Report button -->
+            <a href="{{ url_for('material_receipt_routes.material_receipt_report') }}" class="btn btn-warning">
+                Material Receipt Report
+            </a>
+        </div>
     </form>
 
     <table class="table table-bordered">

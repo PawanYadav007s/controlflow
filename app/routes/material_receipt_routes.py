@@ -41,7 +41,7 @@ def manage_material_receipts():
             'damaged_qty': total_damaged,
             'rejected_qty': total_rejected,
             'pending_qty': pending,
-            'payment_status': getattr(po, 'payment_status', 'N/A')  # Assuming you have this attr in PO or else N/A
+            'payment_status': getattr(po, 'payment_status', 'N/A')
         })
 
     return render_template('material_receipt/manage_material_receipts.html', po_data=po_data, search_so_number=search_so_number)
@@ -68,7 +68,6 @@ def add_material_receipt(po_id):
         rejected_qty = float(request.form['rejected_quantity'])
         remarks = request.form['remarks']
 
-        # Validate quantities: cannot receive more than pending
         if received_qty > pending_qty:
             flash(f'Received quantity cannot exceed pending quantity ({pending_qty}).', 'danger')
             return redirect(url_for('material_receipt_routes.add_material_receipt', po_id=po_id))
@@ -82,7 +81,6 @@ def add_material_receipt(po_id):
         )
         db.session.add(receipt)
 
-        # Auto update PO status
         if received_qty + total_received >= po.quantity:
             po.status = 'Received'
         else:
@@ -100,7 +98,6 @@ def edit_material_receipt(receipt_id):
     receipt = MaterialReceipt.query.get_or_404(receipt_id)
     po = receipt.purchase_order
 
-    # Calculate pending quantity considering this receipt will be edited (exclude current receipt qty)
     total_received = sum(r.received_quantity for r in po.material_receipts if r.id != receipt.id)
     pending_qty = max(po.quantity - total_received, 0)
 
@@ -119,7 +116,6 @@ def edit_material_receipt(receipt_id):
         receipt.rejected_quantity = rejected_qty
         receipt.remarks = remarks
 
-        # Update PO status
         total_received += new_received_qty
         if total_received >= po.quantity:
             po.status = 'Received'
@@ -133,7 +129,6 @@ def edit_material_receipt(receipt_id):
     return render_template('material_receipt/edit_receipt.html', receipt=receipt, pending_qty=pending_qty, po=po)
 
 
-
 @material_receipt_routes.route('/material-receipts/delete/<int:receipt_id>', methods=['POST'])
 def delete_material_receipt(receipt_id):
     receipt = MaterialReceipt.query.get_or_404(receipt_id)
@@ -141,7 +136,6 @@ def delete_material_receipt(receipt_id):
     db.session.delete(receipt)
     db.session.commit()
 
-    # Update PO status after deletion
     total_received = sum(r.received_quantity for r in po.material_receipts)
     if total_received >= po.quantity:
         po.status = 'Received'
@@ -184,3 +178,66 @@ def export_material_receipts_csv():
     output = si.getvalue()
     return Response(output, mimetype='text/csv',
                     headers={"Content-Disposition": "attachment;filename=material_receipts_summary.csv"})
+
+
+@material_receipt_routes.route('/material_receipts/report')
+def material_receipt_report():
+    purchase_orders = PurchaseOrder.query.all()
+
+    report_data = []
+    for po in purchase_orders:
+        total_received, total_damaged, total_rejected, pending = calculate_totals(po)
+        report_data.append({
+            'po': po,
+            'sales_order': po.sales_order,
+            'shop_name': getattr(po.sales_order, 'shop_name', 'N/A'),
+            'received_qty': total_received,
+            'damaged_qty': total_damaged,
+            'rejected_qty': total_rejected,
+            'pending_qty': pending
+        })
+
+    return render_template(
+        'material_receipt/material_receipt_report.html',
+        report_data=report_data,
+        company_name="Rasco Industries",
+        report_date=datetime.now().strftime('%Y-%m-%d')
+    )
+
+
+@material_receipt_routes.route('/material_receipts/report/export/csv')
+def export_material_receipt_report_csv():
+    report_data = MaterialReceipt.query \
+        .join(PurchaseOrder, MaterialReceipt.po_id == PurchaseOrder.id) \
+        .join(Shop, MaterialReceipt.shop_id == Shop.id) \
+        .join(SalesOrder, MaterialReceipt.sales_order_id == SalesOrder.id) \
+        .add_entity(PurchaseOrder) \
+        .add_entity(Shop) \
+        .add_entity(SalesOrder) \
+        .all()
+
+    si = io.StringIO()
+    cw = csv.writer(si)
+    cw.writerow([
+        'PO Number', 'SO Number', 'Shop Name', 'Material', 'Supplier',
+        'Ordered Qty', 'Received Qty', 'Damaged Qty', 'Rejected Qty', 'Pending Qty', 'Status'
+    ])
+
+    for receipt, po, shop, so in report_data:
+        cw.writerow([
+            po.po_number,
+            so.id,
+            shop.name,
+            po.material_description,
+            po.supplier_name,
+            po.quantity,
+            receipt.received_qty,
+            receipt.damaged_qty,
+            receipt.rejected_qty,
+            receipt.pending_qty,
+            po.status
+        ])
+
+    output = si.getvalue()
+    return Response(output, mimetype='text/csv',
+                    headers={"Content-Disposition": "attachment;filename=material_receipt_report.csv"})

@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Add Location{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Add Location</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Location Name</label>
+            <input type="text" name="name" class="form-control" placeholder="e.g., Rack-A1" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input type="text" name="description" class="form-control" placeholder="e.g., Near north wall, top shelf">
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="{{ url_for('location_routes.list_locations') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

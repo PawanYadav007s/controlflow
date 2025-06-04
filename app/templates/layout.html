@@ -57,6 +57,18 @@
         <span class="icon text-success">📥</span> Manage Material Receipts
     </a>
 </li>
+<li class="nav-item mb-2">
+    <a class="nav-link sidebar-link {% if request.path.startswith('/inventory') %}active{% endif %}" href="{{ url_for('material_routes.list_materials') }}">
+        <span class="icon text-info">🏭</span> Manage Inventory
+    </a>
+</li>
+
+
+<li class="nav-item mb-2">
+    <a class="nav-link sidebar-link {% if request.path.startswith('/locations') %}active{% endif %}" href="{{ url_for('location_routes.list_locations') }}">
+        <span class="icon text-secondary">📍</span> Manage Locations
+    </a>
+</li>
 
 
 

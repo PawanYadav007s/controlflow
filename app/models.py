@@ -79,3 +79,86 @@ class MaterialReceipt(db.Model):
 
     purchase_order = db.relationship('PurchaseOrder', backref=db.backref('material_receipts', lazy=True))
 
+
+
+class Material(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    category = db.Column(db.String(50))  # e.g., Raw Material, Consumable, Finished Good
+    unit = db.Column(db.String(20))  # kg, meter, pieces, etc.
+    min_stock_level = db.Column(db.Float, default=0.0)
+
+
+class Location(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True)  # e.g., Rack-A1
+    description = db.Column(db.String(150))
+
+
+
+class Inventory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    material_id = db.Column(db.Integer, db.ForeignKey('material.id'), nullable=False)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+
+    quantity = db.Column(db.Float, default=0.0)  # Total quantity in stock
+    weight = db.Column(db.Float, default=0.0)    # For weighted materials
+    reserved_quantity = db.Column(db.Float, default=0.0)  # For linked SOs
+
+    material = db.relationship('Material', backref=db.backref('stock_entries', lazy=True))
+    location = db.relationship('Location', backref=db.backref('stock_entries', lazy=True))
+
+
+class InventoryTransaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    material_id = db.Column(db.Integer, db.ForeignKey('material.id'))
+    quantity = db.Column(db.Float)
+    weight = db.Column(db.Float)
+    movement_type = db.Column(db.String(10))  # IN / OUT
+    reference = db.Column(db.String(100))  # PO, SO, or Production ref
+    performed_by = db.Column(db.String(100))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    material = db.relationship('Material')
+
+
+
+class ProductionOrder(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sales_order_id = db.Column(db.Integer, db.ForeignKey('sales_order.id'))
+    production_code = db.Column(db.String(50), unique=True)
+    material_id = db.Column(db.Integer, db.ForeignKey('material.id'))
+    planned_quantity = db.Column(db.Float)
+    start_date = db.Column(db.Date)
+    end_date = db.Column(db.Date)
+    status = db.Column(db.String(20), default='Planned')
+
+    material = db.relationship('Material')
+    sales_order = db.relationship('SalesOrder')
+
+
+
+class MaterialIssue(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    production_order_id = db.Column(db.Integer, db.ForeignKey('production_order.id'))
+    material_id = db.Column(db.Integer, db.ForeignKey('material.id'))
+    issued_quantity = db.Column(db.Float)
+    issued_weight = db.Column(db.Float)
+    issued_by = db.Column(db.String(100))
+    issue_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    production_order = db.relationship('ProductionOrder')
+    material = db.relationship('Material')
+
+
+
+class WasteRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    production_order_id = db.Column(db.Integer, db.ForeignKey('production_order.id'))
+    material_id = db.Column(db.Integer, db.ForeignKey('material.id'))
+    waste_quantity = db.Column(db.Float)
+    waste_weight = db.Column(db.Float)
+    reason = db.Column(db.String(200))
+    recorded_on = db.Column(db.DateTime, default=datetime.utcnow)

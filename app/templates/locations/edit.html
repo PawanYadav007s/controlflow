@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Edit Location{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Location</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Location Name</label>
+            <input type="text" name="name" class="form-control" value="{{ location.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input type="text" name="description" class="form-control" value="{{ location.description }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ url_for('location_routes.list_locations') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
