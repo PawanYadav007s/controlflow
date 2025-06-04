@@ -46,28 +46,20 @@
                     </li>
 
                     <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path.startswith('/purchase-order') %}active{% endif %}" href="{{ url_for('purchase_order_routes.manage_purchase_orders') }}">
-                            <span class="icon text-danger">📦</span> Manage Purchase Orders
-                        </a>
-                    </li>
+    <a class="nav-link sidebar-link {% if request.path.startswith('/purchase-order') %}active{% endif %}" href="{{ url_for('purchase_order_routes.manage_purchase_orders') }}">
+        <span class="icon text-danger">📦</span> Manage Purchase Orders
+    </a>
+</li>
 
-                    <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/material-receipt' %}active{% endif %}" href="{{ url_for('base_routes.material_receipt') }}">
-                            <span class="icon text-info">📥</span> Material Receipt
-                        </a>
-                    </li>
+<li class="nav-item mb-2">
+    <a class="nav-link sidebar-link {% if request.path.startswith('/material-receipts') %}active{% endif %}" href="{{ url_for('material_receipt_routes.manage_material_receipts') }}
+">
+        <span class="icon text-success">📥</span> Manage Material Receipts
+    </a>
+</li>
 
-                    <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/inventory' %}active{% endif %}" href="{{ url_for('base_routes.inventory') }}">
-                            <span class="icon text-dark">🏷️</span> Inventory
-                        </a>
-                    </li>
 
-                    <li class="nav-item mb-2">
-                        <a class="nav-link sidebar-link {% if request.path == '/production' %}active{% endif %}" href="{{ url_for('base_routes.production') }}">
-                            <span class="icon text-secondary">🏭</span> Production
-                        </a>
-                    </li>
+
                 </ul>
             </div>
         </nav>

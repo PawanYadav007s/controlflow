@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Manage Material Receipts</h3>
+
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-auto">
+            <input type="text" name="sales_order_number" class="form-control" placeholder="Search by SO Number" value="{{ search_so_number }}">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{{ url_for('material_receipt_routes.manage_material_receipts') }}" class="btn btn-secondary">Reset</a>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('material_receipt_routes.export_material_receipts_csv') }}" class="btn btn-success">Export CSV</a>
+        </div>
+    </form>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>PO Number</th>
+                <th>SO Number</th>
+                <th>Material</th>
+                <th>Supplier</th>
+                <th>Ordered</th>
+                <th>Received</th>
+                <th>Damaged</th>
+                <th>Rejected</th>
+                <th>Pending</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in po_data %}
+            <tr>
+                <td>{{ row.po.po_number }}</td>
+                <td>{{ row.sales_order.id }}</td>
+                <td>{{ row.po.material_description }}</td>
+                <td>{{ row.po.supplier_name }}</td>
+                <td>{{ row.po.quantity }}</td>
+                <td>{{ row.received_qty }}</td>
+                <td>{{ row.damaged_qty }}</td>
+                <td>{{ row.rejected_qty }}</td>
+                <td>{{ row.pending_qty }}</td>
+                <td>{{ row.po.status }}</td>
+                <td>
+                    <a href="{{ url_for('material_receipt_routes.list_receipts_for_po', po_id=row.po.id) }}" class="btn btn-sm btn-info">Details</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="11" class="text-center">No Purchase Orders found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

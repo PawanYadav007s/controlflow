@@ -17,18 +17,4 @@ def dashboard():
 
 
 
-@base_routes.route('/material-receipt')
-def material_receipt():
-    return render_template('material_receipt.html')
 
-@base_routes.route('/inventory')
-def inventory():
-    return render_template('inventory.html')
-
-@base_routes.route('/production')
-def production():
-    return render_template('production.html')
-
-@base_routes.route('/login')
-def login():
-    return render_template('login.html')

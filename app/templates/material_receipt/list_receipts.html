@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Receipts for PO: {{ po.po_number }}</h3>
+    <p>Total Received: {{ total_received }}, Pending: {{ pending_qty }}</p>
+    <a href="{{ url_for('material_receipt_routes.add_material_receipt', po_id=po.id) }}" class="btn btn-primary mb-3">Add Receipt</a>
+    <a href="{{ url_for('material_receipt_routes.manage_material_receipts') }}" class="btn btn-secondary mb-3">Back</a>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Received Qty</th>
+                <th>Damaged Qty</th>
+                <th>Rejected Qty</th>
+                <th>Remarks</th>
+                <th>Timestamp</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for receipt in receipts %}
+            <tr>
+                <td>{{ receipt.received_quantity }}</td>
+                <td>{{ receipt.damaged_quantity }}</td>
+                <td>{{ receipt.rejected_quantity }}</td>
+                <td>{{ receipt.remarks }}</td>
+                <td>{{ receipt.created_at.strftime('%Y-%m-%d %H:%M') if receipt.created_at else 'N/A' }}</td>
+                <td>
+                    <a href="{{ url_for('material_receipt_routes.edit_material_receipt', receipt_id=receipt.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="{{ url_for('material_receipt_routes.delete_material_receipt', receipt_id=receipt.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center">No receipts found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

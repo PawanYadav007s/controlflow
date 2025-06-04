@@ -62,3 +62,20 @@ class PurchaseOrder(db.Model):
         self.unit_price = unit_price
         self.total_price = quantity * unit_price
         self.expected_delivery_date = expected_delivery_date
+
+
+
+
+
+
+class MaterialReceipt(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    purchase_order_id = db.Column(db.Integer, db.ForeignKey('purchase_order.id'), nullable=False)
+    receipt_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    received_quantity = db.Column(db.Float, nullable=False)
+    damaged_quantity = db.Column(db.Float, nullable=False, default=0.0)
+    rejected_quantity = db.Column(db.Float, nullable=False, default=0.0)
+    remarks = db.Column(db.Text)
+
+    purchase_order = db.relationship('PurchaseOrder', backref=db.backref('material_receipts', lazy=True))
+

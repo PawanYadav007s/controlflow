@@ -1,0 +1,186 @@
+from flask import Blueprint, render_template, request, redirect, url_for, flash, Response
+from app import db
+from app.models import PurchaseOrder, MaterialReceipt, SalesOrder
+from datetime import datetime
+import csv
+import io
+
+material_receipt_routes = Blueprint('material_receipt_routes', __name__)
+
+# Helper function to calculate totals per PO
+def calculate_totals(po):
+    total_received = sum(r.received_quantity for r in po.material_receipts)
+    total_damaged = sum(r.damaged_quantity for r in po.material_receipts)
+    total_rejected = sum(r.rejected_quantity for r in po.material_receipts)
+    pending = max(po.quantity - total_received, 0)
+    return total_received, total_damaged, total_rejected, pending
+
+
+@material_receipt_routes.route('/material-receipts', methods=['GET', 'POST'])
+def manage_material_receipts():
+    search_so_number = request.args.get('sales_order_number', '').strip()
+
+    # Query all Purchase Orders and filter by Sales Order number if provided
+    if search_so_number:
+        sales_order = SalesOrder.query.filter_by(id=search_so_number).first()
+        if sales_order:
+            purchase_orders = PurchaseOrder.query.filter_by(sales_order_id=sales_order.id).all()
+        else:
+            purchase_orders = []
+            flash('No Sales Order found with that number.', 'warning')
+    else:
+        purchase_orders = PurchaseOrder.query.all()
+
+    po_data = []
+    for po in purchase_orders:
+        total_received, total_damaged, total_rejected, pending = calculate_totals(po)
+        po_data.append({
+            'po': po,
+            'sales_order': po.sales_order,
+            'received_qty': total_received,
+            'damaged_qty': total_damaged,
+            'rejected_qty': total_rejected,
+            'pending_qty': pending,
+            'payment_status': getattr(po, 'payment_status', 'N/A')  # Assuming you have this attr in PO or else N/A
+        })
+
+    return render_template('material_receipt/manage_material_receipts.html', po_data=po_data, search_so_number=search_so_number)
+
+
+@material_receipt_routes.route('/material-receipts/<int:po_id>/receipts')
+def list_receipts_for_po(po_id):
+    po = PurchaseOrder.query.get_or_404(po_id)
+    receipts = MaterialReceipt.query.filter_by(purchase_order_id=po_id).all()
+    total_received, total_damaged, total_rejected, pending = calculate_totals(po)
+    return render_template('material_receipt/list_receipts.html', po=po, receipts=receipts, pending_qty=pending,
+                           total_received=total_received)
+
+
+@material_receipt_routes.route('/material-receipts/<int:po_id>/add', methods=['GET', 'POST'])
+def add_material_receipt(po_id):
+    po = PurchaseOrder.query.get_or_404(po_id)
+    total_received = sum(r.received_quantity for r in po.material_receipts)
+    pending_qty = max(po.quantity - total_received, 0)
+
+    if request.method == 'POST':
+        received_qty = float(request.form['received_quantity'])
+        damaged_qty = float(request.form['damaged_quantity'])
+        rejected_qty = float(request.form['rejected_quantity'])
+        remarks = request.form['remarks']
+
+        # Validate quantities: cannot receive more than pending
+        if received_qty > pending_qty:
+            flash(f'Received quantity cannot exceed pending quantity ({pending_qty}).', 'danger')
+            return redirect(url_for('material_receipt_routes.add_material_receipt', po_id=po_id))
+
+        receipt = MaterialReceipt(
+            purchase_order_id=po_id,
+            received_quantity=received_qty,
+            damaged_quantity=damaged_qty,
+            rejected_quantity=rejected_qty,
+            remarks=remarks
+        )
+        db.session.add(receipt)
+
+        # Auto update PO status
+        if received_qty + total_received >= po.quantity:
+            po.status = 'Received'
+        else:
+            po.status = 'Partially Received'
+
+        db.session.commit()
+        flash('Material receipt added successfully.', 'success')
+        return redirect(url_for('material_receipt_routes.list_receipts_for_po', po_id=po_id))
+
+    return render_template('material_receipt/add_receipt.html', po=po, pending_qty=pending_qty)
+
+
+@material_receipt_routes.route('/material-receipts/edit/<int:receipt_id>', methods=['GET', 'POST'])
+def edit_material_receipt(receipt_id):
+    receipt = MaterialReceipt.query.get_or_404(receipt_id)
+    po = receipt.purchase_order
+
+    # Calculate pending quantity considering this receipt will be edited (exclude current receipt qty)
+    total_received = sum(r.received_quantity for r in po.material_receipts if r.id != receipt.id)
+    pending_qty = max(po.quantity - total_received, 0)
+
+    if request.method == 'POST':
+        new_received_qty = float(request.form['received_quantity'])
+        damaged_qty = float(request.form['damaged_quantity'])
+        rejected_qty = float(request.form['rejected_quantity'])
+        remarks = request.form['remarks']
+
+        if new_received_qty > pending_qty + receipt.received_quantity:
+            flash(f'Received quantity cannot exceed pending quantity ({pending_qty + receipt.received_quantity}).', 'danger')
+            return redirect(url_for('material_receipt_routes.edit_material_receipt', receipt_id=receipt_id))
+
+        receipt.received_quantity = new_received_qty
+        receipt.damaged_quantity = damaged_qty
+        receipt.rejected_quantity = rejected_qty
+        receipt.remarks = remarks
+
+        # Update PO status
+        total_received += new_received_qty
+        if total_received >= po.quantity:
+            po.status = 'Received'
+        else:
+            po.status = 'Partially Received'
+
+        db.session.commit()
+        flash('Material receipt updated successfully.', 'success')
+        return redirect(url_for('material_receipt_routes.list_receipts_for_po', po_id=po.id))
+
+    return render_template('material_receipt/edit_receipt.html', receipt=receipt, pending_qty=pending_qty, po=po)
+
+
+
+@material_receipt_routes.route('/material-receipts/delete/<int:receipt_id>', methods=['POST'])
+def delete_material_receipt(receipt_id):
+    receipt = MaterialReceipt.query.get_or_404(receipt_id)
+    po = receipt.purchase_order
+    db.session.delete(receipt)
+    db.session.commit()
+
+    # Update PO status after deletion
+    total_received = sum(r.received_quantity for r in po.material_receipts)
+    if total_received >= po.quantity:
+        po.status = 'Received'
+    elif total_received == 0:
+        po.status = 'Pending'
+    else:
+        po.status = 'Partially Received'
+
+    db.session.commit()
+    flash('Material receipt deleted successfully.', 'success')
+    return redirect(url_for('material_receipt_routes.list_receipts_for_po', po_id=po.id))
+
+
+@material_receipt_routes.route('/material-receipts/export/csv')
+def export_material_receipts_csv():
+    purchase_orders = PurchaseOrder.query.all()
+
+    si = io.StringIO()
+    cw = csv.writer(si)
+    cw.writerow([
+        'PO Number', 'SO Number', 'Material Description', 'Supplier', 'Ordered Quantity',
+        'Received Quantity', 'Damaged Quantity', 'Rejected Quantity', 'Pending Quantity', 'PO Status'
+    ])
+
+    for po in purchase_orders:
+        total_received, total_damaged, total_rejected, pending = calculate_totals(po)
+        cw.writerow([
+            po.po_number,
+            po.sales_order_id,
+            po.material_description,
+            po.supplier_name,
+            po.quantity,
+            total_received,
+            total_damaged,
+            total_rejected,
+            pending,
+            po.status
+        ])
+
+    output = si.getvalue()
+    return Response(output, mimetype='text/csv',
+                    headers={"Content-Disposition": "attachment;filename=material_receipts_summary.csv"})
