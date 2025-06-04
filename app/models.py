@@ -38,24 +38,27 @@ class PurchaseOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     po_number = db.Column(db.String(50), unique=True, nullable=False)
     po_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
-    
+
     sales_order_id = db.Column(db.Integer, db.ForeignKey('sales_order.id'), nullable=False)
-    sales_order = db.relationship('SalesOrder', backref=db.backref('purchase_orders', lazy=True))
-    
+    material_id = db.Column(db.Integer, db.ForeignKey('material.id'), nullable=False)  # NEW
+
     supplier_name = db.Column(db.String(100), nullable=False)
     material_description = db.Column(db.Text, nullable=False)
     quantity = db.Column(db.Float, nullable=False)
     unit_price = db.Column(db.Float, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
-
-    status = db.Column(db.String(20), default='Pending')  # Options: Pending, Received
+    status = db.Column(db.String(20), default='Pending')
     expected_delivery_date = db.Column(db.Date, nullable=True)
 
-    def __init__(self, po_number, po_date, sales_order_id, supplier_name, material_description,
+    sales_order = db.relationship('SalesOrder', backref=db.backref('purchase_orders', lazy=True))
+    material = db.relationship('Material', backref=db.backref('purchase_orders', lazy=True))  # NEW
+
+    def __init__(self, po_number, po_date, sales_order_id, material_id, supplier_name, material_description,
                  quantity, unit_price, expected_delivery_date):
         self.po_number = po_number
         self.po_date = po_date
         self.sales_order_id = sales_order_id
+        self.material_id = material_id
         self.supplier_name = supplier_name
         self.material_description = material_description
         self.quantity = quantity

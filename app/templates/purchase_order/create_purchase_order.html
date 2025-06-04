@@ -12,6 +12,20 @@
       <label class="form-label">PO Date</label>
       <input type="date" class="form-control" name="po_date" required>
     </div>
+
+
+    <div class="mb-3">
+  <label for="material_id" class="form-label">Material</label>
+  <select name="material_id" id="material_id" class="form-select" required>
+    {% for material in materials %}
+      <option value="{{ material.id }}"
+        {% if purchase_order and purchase_order.material_id == material.id %}selected{% endif %}>
+        {{ material.code }} - {{ material.name }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
+
     <div class="col-md-4">
       <label class="form-label">Supplier Name</label>
       <input type="text" class="form-control" name="supplier_name" required>

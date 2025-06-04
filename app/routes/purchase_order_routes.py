@@ -2,7 +2,8 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
-from app.models import PurchaseOrder, SalesOrder
+from app.models import PurchaseOrder, SalesOrder, Material
+
 from datetime import datetime
 
 purchase_order_routes = Blueprint('purchase_order_routes', __name__)
@@ -29,6 +30,7 @@ def create_purchase_order():
                 expected_delivery_date = datetime.strptime(expected_delivery_date, "%Y-%m-%d")
             sales_order_id = int(request.form['sales_order_id'])
 
+            material_id = int(request.form['material_id'])
             new_po = PurchaseOrder(
                 po_number=po_number,
                 po_date=po_date,
@@ -37,7 +39,8 @@ def create_purchase_order():
                 quantity=quantity,
                 unit_price=unit_price,
                 expected_delivery_date=expected_delivery_date,
-                sales_order_id=sales_order_id
+                sales_order_id=sales_order_id,
+                material_id=material_id  # Add this
             )
             db.session.add(new_po)
             db.session.commit()
@@ -45,8 +48,9 @@ def create_purchase_order():
             return redirect(url_for('purchase_order_routes.manage_purchase_orders'))
         except Exception as e:
             flash(f'Error: {str(e)}', 'danger')
-    return render_template('purchase_order/create_purchase_order.html', sales_orders=sales_orders)
-
+    
+    materials = Material.query.all()  # This line fetches materials from DB
+    return render_template('purchase_order/create_purchase_order.html', sales_orders=sales_orders, materials=materials)
 
 @purchase_order_routes.route('/purchase-orders/edit/<int:id>', methods=['GET', 'POST'])
 def edit_purchase_order(id):
@@ -60,6 +64,7 @@ def edit_purchase_order(id):
             purchase_order.material_description = request.form['material_description']
             purchase_order.quantity = float(request.form['quantity'])
             purchase_order.unit_price = float(request.form['unit_price'])
+            purchase_order.material_id = int(request.form['material_id'])
             purchase_order.total_price = purchase_order.quantity * purchase_order.unit_price
             expected_delivery_date = request.form.get('expected_delivery_date')
             if expected_delivery_date:
@@ -74,7 +79,9 @@ def edit_purchase_order(id):
             return redirect(url_for('purchase_order_routes.manage_purchase_orders'))
         except Exception as e:
             flash(f'Error: {str(e)}', 'danger')
-    return render_template('purchase_order/edit_purchase_order.html', purchase_order=purchase_order, sales_orders=sales_orders)
+    
+    materials = Material.query.all()  
+    return render_template('purchase_order/edit_purchase_order.html', purchase_order=purchase_order, sales_orders=sales_orders, materials=materials)
 
 
 @purchase_order_routes.route('/purchase-orders/delete/<int:id>', methods=['POST'])

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2 class="mb-4">Inventory Overview</h2>
+
+<form method="get" class="row mb-3">
+    <div class="col-md-4">
+        <select name="location_id" class="form-select" onchange="this.form.submit()">
+            <option value="">-- All Locations --</option>
+            {% for loc in locations %}
+                <option value="{{ loc.id }}" {% if selected_location == loc.id %}selected{% endif %}>
+                    {{ loc.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Material Code</th>
+            <th>Material Name</th>
+            <th>Location</th>
+            <th>Quantity</th>
+            <th>Weight</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inv in inventory %}
+        <tr>
+            <td>{{ inv.material.code }}</td>
+            <td>{{ inv.material.name }}</td>
+            <td>{{ inv.location.name }}</td>
+            <td>{{ inv.quantity }}</td>
+            <td>{{ inv.weight }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5" class="text-center">No inventory data found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

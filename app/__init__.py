@@ -19,6 +19,9 @@ def create_app():
     from .routes.material_receipt_routes import material_receipt_routes  
     from app.routes.material_routes import material_bp
     from app.routes.location_routes import location_routes
+    from app.routes.inventory_routes import inventory_bp
+
+
 
 
 
@@ -29,6 +32,7 @@ def create_app():
     app.register_blueprint(material_receipt_routes)  # ✅ Register blueprint
     app.register_blueprint(material_bp)
     app.register_blueprint(location_routes)
+    app.register_blueprint(inventory_bp)
 
     with app.app_context():
         from . import models
