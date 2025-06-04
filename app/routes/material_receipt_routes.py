@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, Response
 from app import db
-from app.models import PurchaseOrder, MaterialReceipt, SalesOrder
+from app.models import PurchaseOrder, MaterialReceipt, SalesOrder,Location, Inventory
 from datetime import datetime
 import csv
 import io
@@ -61,11 +61,13 @@ def add_material_receipt(po_id):
     po = PurchaseOrder.query.get_or_404(po_id)
     total_received = sum(r.received_quantity for r in po.material_receipts)
     pending_qty = max(po.quantity - total_received, 0)
+    locations = Location.query.all()
 
     if request.method == 'POST':
         received_qty = float(request.form['received_quantity'])
         damaged_qty = float(request.form['damaged_quantity'])
         rejected_qty = float(request.form['rejected_quantity'])
+        location_id = int(request.form['location_id'])
         remarks = request.form['remarks']
 
         if received_qty > pending_qty:
@@ -77,45 +79,79 @@ def add_material_receipt(po_id):
             received_quantity=received_qty,
             damaged_quantity=damaged_qty,
             rejected_quantity=rejected_qty,
+            location_id=location_id,
             remarks=remarks
         )
         db.session.add(receipt)
 
+        # Update inventory
+        material_id = po.material_id
+        inventory = Inventory.query.filter_by(material_id=material_id, location_id=location_id).first()
+        if inventory:
+            inventory.quantity += received_qty
+        else:
+            inventory = Inventory(material_id=material_id, location_id=location_id, quantity=received_qty)
+            db.session.add(inventory)
+
+        # Update PO status
         if received_qty + total_received >= po.quantity:
             po.status = 'Received'
         else:
             po.status = 'Partially Received'
 
         db.session.commit()
-        flash('Material receipt added successfully.', 'success')
+        flash('Material receipt added successfully and inventory updated.', 'success')
         return redirect(url_for('material_receipt_routes.list_receipts_for_po', po_id=po_id))
 
-    return render_template('material_receipt/add_receipt.html', po=po, pending_qty=pending_qty)
+    return render_template('material_receipt/add_receipt.html', po=po, pending_qty=pending_qty, locations=locations)
 
 
 @material_receipt_routes.route('/material-receipts/edit/<int:receipt_id>', methods=['GET', 'POST'])
 def edit_material_receipt(receipt_id):
     receipt = MaterialReceipt.query.get_or_404(receipt_id)
     po = receipt.purchase_order
+    old_location_id = receipt.location_id
+    old_received_qty = receipt.received_quantity
 
+    # Exclude current receipt from total received calc
     total_received = sum(r.received_quantity for r in po.material_receipts if r.id != receipt.id)
     pending_qty = max(po.quantity - total_received, 0)
+    locations = Location.query.all()
 
     if request.method == 'POST':
         new_received_qty = float(request.form['received_quantity'])
         damaged_qty = float(request.form['damaged_quantity'])
         rejected_qty = float(request.form['rejected_quantity'])
         remarks = request.form['remarks']
+        new_location_id = int(request.form['location_id'])
 
-        if new_received_qty > pending_qty + receipt.received_quantity:
-            flash(f'Received quantity cannot exceed pending quantity ({pending_qty + receipt.received_quantity}).', 'danger')
+        # Check for pending quantity overflow
+        if new_received_qty > pending_qty + old_received_qty:
+            flash(f'Received quantity cannot exceed pending quantity ({pending_qty + old_received_qty}).', 'danger')
             return redirect(url_for('material_receipt_routes.edit_material_receipt', receipt_id=receipt_id))
 
+        # Update inventory for old location (subtract old quantity)
+        if old_location_id:
+            old_inventory = Inventory.query.filter_by(material_id=po.material_id, location_id=old_location_id).first()
+            if old_inventory:
+                old_inventory.quantity -= old_received_qty
+
+        # Update inventory for new location (add new quantity)
+        new_inventory = Inventory.query.filter_by(material_id=po.material_id, location_id=new_location_id).first()
+        if new_inventory:
+            new_inventory.quantity += new_received_qty
+        else:
+            new_inventory = Inventory(material_id=po.material_id, location_id=new_location_id, quantity=new_received_qty)
+            db.session.add(new_inventory)
+
+        # Update the receipt
         receipt.received_quantity = new_received_qty
         receipt.damaged_quantity = damaged_qty
         receipt.rejected_quantity = rejected_qty
         receipt.remarks = remarks
+        receipt.location_id = new_location_id
 
+        # Update PO status
         total_received += new_received_qty
         if total_received >= po.quantity:
             po.status = 'Received'
@@ -123,10 +159,16 @@ def edit_material_receipt(receipt_id):
             po.status = 'Partially Received'
 
         db.session.commit()
-        flash('Material receipt updated successfully.', 'success')
+        flash('Material receipt updated successfully and inventory adjusted.', 'success')
         return redirect(url_for('material_receipt_routes.list_receipts_for_po', po_id=po.id))
 
-    return render_template('material_receipt/edit_receipt.html', receipt=receipt, pending_qty=pending_qty, po=po)
+    return render_template(
+        'material_receipt/edit_receipt.html',
+        receipt=receipt,
+        pending_qty=pending_qty,
+        po=po,
+        locations=locations
+    )
 
 
 @material_receipt_routes.route('/material-receipts/delete/<int:receipt_id>', methods=['POST'])

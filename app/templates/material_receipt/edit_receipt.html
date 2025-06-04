@@ -3,7 +3,7 @@
 <div class="container mt-4">
     <h3>Add Material Receipt for PO: {{ po.po_number }}</h3>
     <p>Pending Quantity: {{ pending_qty }}</p>
-    <form method="POST">
+        <form method="POST">
         <div class="mb-3">
             <label for="received_quantity" class="form-label">Received Quantity</label>
             <input type="number" step="0.01" name="received_quantity" class="form-control" required>
@@ -15,6 +15,15 @@
         <div class="mb-3">
             <label for="rejected_quantity" class="form-label">Rejected Quantity</label>
             <input type="number" step="0.01" name="rejected_quantity" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="location_id" class="form-label">Storage Location</label>
+            <select name="location_id" class="form-select" required>
+                <option value="" disabled selected>Select a location</option>
+                {% for location in locations %}
+                    <option value="{{ location.id }}">{{ location.name }}</option>
+                {% endfor %}
+            </select>
         </div>
         <div class="mb-3">
             <label for="remarks" class="form-label">Remarks</label>

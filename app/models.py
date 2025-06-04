@@ -80,7 +80,11 @@ class MaterialReceipt(db.Model):
     rejected_quantity = db.Column(db.Float, nullable=False, default=0.0)
     remarks = db.Column(db.Text)
 
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    location = db.relationship('Location')
+
     purchase_order = db.relationship('PurchaseOrder', backref=db.backref('material_receipts', lazy=True))
+
 
 
 

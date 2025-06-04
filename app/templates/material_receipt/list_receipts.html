@@ -21,6 +21,7 @@
             {% for receipt in receipts %}
             <tr>
                 <td>{{ receipt.received_quantity }}</td>
+                <td>{{ receipt.location.name }}</td>
                 <td>{{ receipt.damaged_quantity }}</td>
                 <td>{{ receipt.rejected_quantity }}</td>
                 <td>{{ receipt.remarks }}</td>
