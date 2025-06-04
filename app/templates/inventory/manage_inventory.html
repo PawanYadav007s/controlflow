@@ -3,9 +3,10 @@
 {% block content %}
 <h2 class="mb-4">Inventory Overview</h2>
 
-<form method="get" class="row mb-3">
+<form method="get" class="row g-3 align-items-end mb-3">
     <div class="col-md-4">
-        <select name="location_id" class="form-select" onchange="this.form.submit()">
+        <label for="location_id" class="form-label">Filter by Location</label>
+        <select name="location_id" id="location_id" class="form-select" onchange="this.form.submit()">
             <option value="">-- All Locations --</option>
             {% for loc in locations %}
                 <option value="{{ loc.id }}" {% if selected_location == loc.id %}selected{% endif %}>
@@ -14,6 +15,15 @@
             {% endfor %}
         </select>
     </div>
+
+
+     <div class="col-auto">
+            <!-- NEW Report button -->
+           <a href="{{ url_for('location_routes.list_locations') }}" class="btn btn-success">
+                Add Locations for Inventory Materials
+            </a>
+        </div>
+
 </form>
 
 <table class="table table-bordered table-striped">

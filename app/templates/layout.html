@@ -18,15 +18,16 @@
     </div>
 </nav>
 
-<!-- Sidebar + Content -->
+<!-- Sidebar + Content Wrapper -->
 <div class="container-fluid">
     <div class="row">
 
         <!-- Sidebar -->
-        <nav id="sidebarMenu" class="col-md-2 d-md-block bg-white shadow-sm vh-100 position-fixed border-end">
+        <nav id="sidebarMenu" class="col-md-2 d-md-block bg-white shadow-sm vh-100 position-fixed border-end overflow-auto">
             <div class="d-flex flex-column h-100 px-3 pt-4">
                 <h4 class="fw-bold mb-4 text-primary">ControlFlow</h4>
                 <ul class="nav flex-column">
+
                     <li class="nav-item mb-2">
                         <a class="nav-link sidebar-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('base_routes.dashboard') }}">
                             <span class="icon text-primary">📊</span> Dashboard
@@ -46,47 +47,31 @@
                     </li>
 
                     <li class="nav-item mb-2">
-    <a class="nav-link sidebar-link {% if request.path.startswith('/purchase-order') %}active{% endif %}" href="{{ url_for('purchase_order_routes.manage_purchase_orders') }}">
-        <span class="icon text-danger">📦</span> Manage Purchase Orders
-    </a>
-</li>
+                        <a class="nav-link sidebar-link {% if request.path.startswith('/purchase-order') %}active{% endif %}" href="{{ url_for('purchase_order_routes.manage_purchase_orders') }}">
+                            <span class="icon text-danger">📦</span> Manage Purchase Orders
+                        </a>
+                    </li>
 
-<li class="nav-item mb-2">
-    <a class="nav-link sidebar-link {% if request.path.startswith('/material-receipts') %}active{% endif %}" href="{{ url_for('material_receipt_routes.manage_material_receipts') }}
-">
-        <span class="icon text-success">📥</span> Manage Material Receipts
-    </a>
-</li>
-<li class="nav-item mb-2">
-    <a class="nav-link sidebar-link {% if request.path.startswith('/inventory') %}active{% endif %}" href="{{ url_for('material_routes.list_materials') }}">
-        <span class="icon text-info">🏭</span> Manage Inventory
-    </a>
-</li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path.startswith('/material-receipts') %}active{% endif %}" href="{{ url_for('material_receipt_routes.manage_material_receipts') }}">
+                            <span class="icon text-success">📥</span> Material Receipts
+                        </a>
+                    </li>
 
+                    <li class="nav-item mb-2">
+                        <a class="nav-link sidebar-link {% if request.path.startswith('/inventory') %}active{% endif %}" href="{{ url_for('inventory_routes.manage_inventory') }}">
+                            <span class="icon text-info">🏷️</span> Inventory Management
+                        </a>
+                    </li>
 
-<li class="nav-item mb-2">
-    <a class="nav-link sidebar-link {% if request.path.startswith('/locations') %}active{% endif %}" href="{{ url_for('location_routes.list_locations') }}">
-        <span class="icon text-secondary">📍</span> Manage Locations
-    </a>
-</li>
-
-
-<li class="nav-item mb-2">
-    <a class="nav-link sidebar-link {% if request.path.startswith('/inventory') %}active{% endif %}"
-       href="{{ url_for('inventory_routes.manage_inventory') }}">
-        <span class="icon text-info">🏷️</span> Inventory
-    </a>
-</li>
-
-
-
+                    
 
                 </ul>
             </div>
         </nav>
 
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 offset-md-2 px-md-4 py-4">
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 offset-md-2 px-4 py-4">
             {% block content %}
             {% endblock %}
         </main>
