@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block title %}Waste Records{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Waste Records</h2>
+    <a href="{{ url_for('production.create_waste_record') }}" class="btn btn-primary mb-3">+ Create Waste Record</a>
+
+    <form method="get" class="row g-3 mb-3">
+        <div class="col-md-4">
+            <label for="production_order_id" class="form-label">Filter by Production Order</label>
+            <select name="production_order_id" class="form-select" onchange="this.form.submit()">
+                <option value="">All Orders</option>
+                {% for po in production_orders %}
+                    <option value="{{ po.id }}" {% if selected_production_order == po.id %}selected{% endif %}>
+                        {{ po.production_code }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Production Order</th>
+                <th>Waste Type</th>
+                <th>Waste Weight</th>
+                <th>Waste Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for wr in waste_records %}
+            <tr>
+                <td>{{ wr.production_order.production_code }}</td>
+                <td>{{ wr.waste_type }}</td>
+                <td>{{ wr.waste_weight }}</td>
+                <td>{{ wr.recorded_on.strftime('%Y-%m-%d') }}</td>
+
+                <td>
+                    <a href="{{ url_for('production.edit_waste_record', id=wr.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="{{ url_for('production.delete_waste_record', id=wr.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Delete this waste record?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center">No waste records found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

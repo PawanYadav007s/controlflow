@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
 ma = Marshmallow()
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
@@ -11,6 +13,7 @@ def create_app():
 
     db.init_app(app)
     ma.init_app(app)
+    migrate.init_app(app, db)
 
     # Import blueprints
     from .routes.base_routes import base_routes
@@ -21,7 +24,7 @@ def create_app():
     from .routes.material_routes import material_bp
     from .routes.location_routes import location_routes
     from .routes.inventory_routes import inventory_bp
-    # from routes.production import production_bp  # add production routes
+    from .routes.production import production_bp  # ✅ Enabled production routes
 
     # Register blueprints
     app.register_blueprint(base_routes)
@@ -32,7 +35,7 @@ def create_app():
     app.register_blueprint(material_bp)
     app.register_blueprint(location_routes)
     app.register_blueprint(inventory_bp)
-    # app.register_blueprint(production_bp)  # register production routes
+    app.register_blueprint(production_bp)  # ✅ Register production routes
 
     with app.app_context():
         from . import models

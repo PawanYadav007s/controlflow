@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Edit Production Order{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Production Order</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label for="sales_order_id" class="form-label">Sales Order</label>
+            <select name="sales_order_id" class="form-select">
+                {% for so in sales_orders %}
+                    <option value="{{ so.id }}" {% if so.id == po.sales_order_id %}selected{% endif %}>SO-{{ so.id }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="production_code" class="form-label">Production Code</label>
+            <input type="text" class="form-control" name="production_code" value="{{ po.production_code }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="material_id" class="form-label">Material</label>
+            <select name="material_id" class="form-select">
+                {% for m in materials %}
+                    <option value="{{ m.id }}" {% if m.id == po.material_id %}selected{% endif %}>{{ m.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="planned_quantity" class="form-label">Planned Quantity</label>
+            <input type="number" step="any" class="form-control" name="planned_quantity" value="{{ po.planned_quantity }}">
+        </div>
+        <div class="mb-3">
+            <label for="start_date" class="form-label">Start Date</label>
+            <input type="date" class="form-control" name="start_date" value="{{ po.start_date.strftime('%Y-%m-%d') if po.start_date }}">
+        </div>
+        <div class="mb-3">
+            <label for="end_date" class="form-label">End Date</label>
+            <input type="date" class="form-control" name="end_date" value="{{ po.end_date.strftime('%Y-%m-%d') if po.end_date }}">
+        </div>
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" class="form-select">
+                {% for status in ['Planned', 'In Progress', 'Completed'] %}
+                    <option value="{{ status }}" {% if po.status == status %}selected{% endif %}>{{ status }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ url_for('production.production_orders') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}Edit Material Issue{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Material Issue</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label for="production_order_id" class="form-label">Production Order</label>
+            <select name="production_order_id" class="form-select" required>
+                {% for po in production_orders %}
+                    <option value="{{ po.id }}" {% if po.id == issue.production_order_id %}selected{% endif %}>{{ po.production_code }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="material_id" class="form-label">Material</label>
+            <select name="material_id" class="form-select" required>
+                {% for m in materials %}
+                    <option value="{{ m.id }}" {% if m.id == issue.material_id %}selected{% endif %}>{{ m.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="issued_quantity" class="form-label">Issued Quantity</label>
+            <input type="number" step="any" class="form-control" name="issued_quantity" value="{{ issue.issued_quantity }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="issued_weight" class="form-label">Issued Weight</label>
+            <input type="number" step="any" class="form-control" name="issued_weight" value="{{ issue.issued_weight }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="issued_by" class="form-label">Issued By</label>
+            <input type="text" class="form-control" name="issued_by" value="{{ issue.issued_by }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="issue_date" class="form-label">Issue Date</label>
+            <input type="date" class="form-control" name="issue_date" value="{{ issue.issue_date.strftime('%Y-%m-%d') }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ url_for('production.material_issues') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

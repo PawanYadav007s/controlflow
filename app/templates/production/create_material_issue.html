@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}Create Material Issue{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Create Material Issue</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label for="production_order_id" class="form-label">Production Order</label>
+            <select name="production_order_id" id="production_order_id" class="form-select" required>
+                {% for po in production_orders %}
+                    <option value="{{ po.id }}"> {{ po.production_code }} </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="material_id" class="form-label">Material</label>
+            <select name="material_id" id="material_id" class="form-select" required>
+                {% for m in materials %}
+                    <option value="{{ m.id }}">{{ m.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="issued_quantity" class="form-label">Issued Quantity</label>
+            <input type="number" step="any" class="form-control" name="issued_quantity" id="issued_quantity" required>
+        </div>
+        <div class="mb-3">
+            <label for="issued_weight" class="form-label">Issued Weight</label>
+            <input type="number" step="any" class="form-control" name="issued_weight" id="issued_weight" required>
+        </div>
+        <div class="mb-3">
+            <label for="issued_by" class="form-label">Issued By</label>
+            <input type="text" class="form-control" name="issued_by" id="issued_by" required>
+        </div>
+        <div class="mb-3">
+            <label for="issue_date" class="form-label">Issue Date</label>
+            <input type="date" class="form-control" name="issue_date" id="issue_date" required>
+        </div>
+        <button type="submit" class="btn btn-success">Create</button>
+        <a href="{{ url_for('production.material_issues') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

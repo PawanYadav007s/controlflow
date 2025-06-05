@@ -127,8 +127,7 @@ class Inventory(db.Model):
 
 # This is an updated models.py and flow explanation for integrating InventoryTransaction into a production-enabled ERP system.
 
-from datetime import datetime
-from app import db
+
 
 class InventoryTransaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -138,7 +137,7 @@ class InventoryTransaction(db.Model):
     movement_type = db.Column(db.String(10))  # IN / OUT
     reference = db.Column(db.String(100))  # PO, SO, Production Ref
     performed_by = db.Column(db.String(100))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     material = db.relationship('Material')
 
@@ -164,7 +163,7 @@ class MaterialIssue(db.Model):
     issued_quantity = db.Column(db.Float)
     issued_weight = db.Column(db.Float)
     issued_by = db.Column(db.String(100))
-    issue_date = db.Column(db.DateTime, default=datetime.utcnow)
+    issue_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     production_order = db.relationship('ProductionOrder')
     material = db.relationship('Material')
@@ -177,15 +176,19 @@ class WasteRecord(db.Model):
     waste_quantity = db.Column(db.Float)
     waste_weight = db.Column(db.Float)
     reason = db.Column(db.String(200))
-    recorded_on = db.Column(db.DateTime, default=datetime.utcnow)
+    recorded_on = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    # Add relationships here:
+    production_order = db.relationship('ProductionOrder', backref='waste_records')
+    material = db.relationship('Material', backref='waste_records')
+
+
 
 # InventoryTransaction FLOW:
 # --------------------------------------------------
 # 1. MaterialReceipt  -> InventoryTransaction IN
 # 2. MaterialIssue    -> InventoryTransaction OUT
 # 3. ProductionOutput -> InventoryTransaction IN
-
-# Example (route logic in production.py or inventory.py):
 
 def record_inventory_transaction(material_id, quantity, weight, movement_type, reference, performed_by):
     tx = InventoryTransaction(
@@ -198,13 +201,3 @@ def record_inventory_transaction(material_id, quantity, weight, movement_type, r
     )
     db.session.add(tx)
     db.session.commit()
-
-# INTEGRATION POINTS:
-# 1. In Material Receipt route:
-#    record_inventory_transaction(material_id, received_quantity, weight, 'IN', po_number, username)
-
-# 2. In Material Issue route:
-#    record_inventory_transaction(material_id, issued_quantity, issued_weight, 'OUT', production_code, username)
-
-# 3. In Production Completion route (not yet created):
-#    record_inventory_transaction(finished_good_material_id, qty_produced, weight, 'IN', production_code, username)

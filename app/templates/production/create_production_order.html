@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Create Production Order{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Create Production Order</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label for="sales_order_id" class="form-label">Sales Order</label>
+            <select name="sales_order_id" id="sales_order_id" class="form-select" required>
+                {% for so in sales_orders %}
+                    <option value="{{ so.id }}">SO-{{ so.id }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="production_code" class="form-label">Production Code</label>
+            <input type="text" class="form-control" name="production_code" id="production_code" required>
+        </div>
+        <div class="mb-3">
+            <label for="material_id" class="form-label">Material</label>
+            <select name="material_id" id="material_id" class="form-select" required>
+                {% for m in materials %}
+                    <option value="{{ m.id }}">{{ m.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="planned_quantity" class="form-label">Planned Quantity</label>
+            <input type="number" step="any" class="form-control" name="planned_quantity" id="planned_quantity" required>
+        </div>
+        <div class="mb-3">
+            <label for="start_date" class="form-label">Start Date</label>
+            <input type="date" class="form-control" name="start_date" id="start_date">
+        </div>
+        <div class="mb-3">
+            <label for="end_date" class="form-label">End Date</label>
+            <input type="date" class="form-control" name="end_date" id="end_date">
+        </div>
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status" class="form-select">
+                <option value="Planned">Planned</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Create</button>
+        <a href="{{ url_for('production.production_orders') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}Edit Waste Record{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Waste Record</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label for="production_order_id" class="form-label">Production Order</label>
+            <select name="production_order_id" class="form-select" required>
+                {% for po in production_orders %}
+                    <option value="{{ po.id }}" {% if po.id == wr.production_order_id %}selected{% endif %}>{{ po.production_code }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="material_id" class="form-label">Material</label>
+            <select name="material_id" class="form-select" required>
+                {% for material in materials %}
+                    <option value="{{ material.id }}" {% if material.id == wr.material_id %}selected{% endif %}>{{ material.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="waste_quantity" class="form-label">Waste Quantity</label>
+            <input type="number" step="any" class="form-control" name="waste_quantity" value="{{ wr.waste_quantity }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="waste_weight" class="form-label">Waste Weight</label>
+            <input type="number" step="any" class="form-control" name="waste_weight" value="{{ wr.waste_weight }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="reason" class="form-label">Reason</label>
+            <textarea class="form-control" name="reason">{{ wr.reason }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ url_for('production.waste_records') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

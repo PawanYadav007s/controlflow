@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block title %}Material Issues{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Material Issues</h2>
+    <a href="{{ url_for('production.create_material_issue') }}" class="btn btn-primary mb-3">+ Create Material Issue</a>
+
+    <form method="get" class="row g-3 mb-3">
+        <div class="col-md-4">
+            <label for="production_order_id" class="form-label">Filter by Production Order</label>
+            <select name="production_order_id" class="form-select" onchange="this.form.submit()">
+                <option value="">All Orders</option>
+                {% for po in production_orders %}
+                    <option value="{{ po.id }}" {% if selected_production_order == po.id %}selected{% endif %}>
+                        {{ po.production_code }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Production Order</th>
+                <th>Material</th>
+                <th>Issued Quantity</th>
+                <th>Issued Weight</th>
+                <th>Issued By</th>
+                <th>Issue Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mi in issues %}
+            <tr>
+                <td>{{ mi.production_order.production_code }}</td>
+                <td>{{ mi.material.name }}</td>
+                <td>{{ mi.issued_quantity }}</td>
+                <td>{{ mi.issued_weight }}</td>
+                <td>{{ mi.issued_by }}</td>
+                <td>{{ mi.issue_date.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    <a href="{{ url_for('production.edit_material_issue', id=mi.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="{{ url_for('production.delete_material_issue', id=mi.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Delete this issue?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="text-center">No material issues found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

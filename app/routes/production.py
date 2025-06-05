@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from app import db
-from app.models import ProductionOrder, MaterialIssue, WasteRecord, InventoryTransaction, SalesOrder, Material
-from datetime import datetime
+from app.models import ProductionOrder, MaterialIssue, WasteRecord, InventoryTransaction, SalesOrder, Material,Inventory
+from datetime import datetime,timezone
 
 production_bp = Blueprint('production', __name__, url_prefix='/production')
 
@@ -15,7 +15,7 @@ def record_inventory_transaction(material_id, quantity, weight, movement_type, r
         movement_type=movement_type,
         reference=reference,
         performed_by=performed_by,
-        timestamp=datetime.utcnow()
+        timestamp= datetime.now(timezone.utc)
     )
     db.session.add(tx)
     db.session.commit()
@@ -143,7 +143,7 @@ def create_material_issue():
             issued_quantity=issued_quantity,
             issued_weight=issued_weight or 0.0,
             issued_by=issued_by,
-            issue_date=datetime.utcnow()
+            issue_date= datetime.now(timezone.utc)
         )
         db.session.add(mi)
         # Reduce inventory quantity accordingly
@@ -245,13 +245,15 @@ def waste_records():
     query = WasteRecord.query.order_by(WasteRecord.recorded_on.desc())
     if production_order_id:
         query = query.filter_by(production_order_id=production_order_id)
-    wastes = query.all()
+    waste_records = query.all()
+
 
     production_orders = ProductionOrder.query.all()
     materials = Material.query.all()
-    return render_template('production/waste_records.html', wastes=wastes,
-                           production_orders=production_orders, materials=materials,
-                           selected_production_order=production_order_id)
+    return render_template('production/waste_records.html', waste_records=waste_records,
+                       production_orders=production_orders, materials=materials,
+                       selected_production_order=production_order_id)
+
 
 
 @production_bp.route('/waste_records/create', methods=['GET', 'POST'])
@@ -273,7 +275,7 @@ def create_waste_record():
             waste_quantity=waste_quantity,
             waste_weight=waste_weight or 0.0,
             reason=reason,
-            recorded_on=datetime.utcnow()
+            recorded_on= datetime.now(timezone.utc)
         )
         db.session.add(wr)
         db.session.commit()
