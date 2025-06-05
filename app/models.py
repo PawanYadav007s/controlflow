@@ -1,6 +1,6 @@
 from datetime import date
 from app import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class Quotation(db.Model):
@@ -74,11 +74,18 @@ class PurchaseOrder(db.Model):
 class MaterialReceipt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     purchase_order_id = db.Column(db.Integer, db.ForeignKey('purchase_order.id'), nullable=False)
-    receipt_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    receipt_date = db.Column(db.Date, nullable=False, default=lambda: datetime.now(timezone.utc).date())
     received_quantity = db.Column(db.Float, nullable=False)
     damaged_quantity = db.Column(db.Float, nullable=False, default=0.0)
     rejected_quantity = db.Column(db.Float, nullable=False, default=0.0)
     remarks = db.Column(db.Text)
+
+    created_at = db.Column(
+    db.DateTime(timezone=True),
+    nullable=False,
+    default=lambda: datetime.now(timezone.utc)
+    )
+
 
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
     location = db.relationship('Location')
@@ -118,18 +125,22 @@ class Inventory(db.Model):
     location = db.relationship('Location', backref=db.backref('stock_entries', lazy=True))
 
 
+# This is an updated models.py and flow explanation for integrating InventoryTransaction into a production-enabled ERP system.
+
+from datetime import datetime
+from app import db
+
 class InventoryTransaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     material_id = db.Column(db.Integer, db.ForeignKey('material.id'))
     quantity = db.Column(db.Float)
     weight = db.Column(db.Float)
     movement_type = db.Column(db.String(10))  # IN / OUT
-    reference = db.Column(db.String(100))  # PO, SO, or Production ref
+    reference = db.Column(db.String(100))  # PO, SO, Production Ref
     performed_by = db.Column(db.String(100))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     material = db.relationship('Material')
-
 
 
 class ProductionOrder(db.Model):
@@ -146,7 +157,6 @@ class ProductionOrder(db.Model):
     sales_order = db.relationship('SalesOrder')
 
 
-
 class MaterialIssue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     production_order_id = db.Column(db.Integer, db.ForeignKey('production_order.id'))
@@ -160,7 +170,6 @@ class MaterialIssue(db.Model):
     material = db.relationship('Material')
 
 
-
 class WasteRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     production_order_id = db.Column(db.Integer, db.ForeignKey('production_order.id'))
@@ -169,3 +178,33 @@ class WasteRecord(db.Model):
     waste_weight = db.Column(db.Float)
     reason = db.Column(db.String(200))
     recorded_on = db.Column(db.DateTime, default=datetime.utcnow)
+
+# InventoryTransaction FLOW:
+# --------------------------------------------------
+# 1. MaterialReceipt  -> InventoryTransaction IN
+# 2. MaterialIssue    -> InventoryTransaction OUT
+# 3. ProductionOutput -> InventoryTransaction IN
+
+# Example (route logic in production.py or inventory.py):
+
+def record_inventory_transaction(material_id, quantity, weight, movement_type, reference, performed_by):
+    tx = InventoryTransaction(
+        material_id=material_id,
+        quantity=quantity,
+        weight=weight,
+        movement_type=movement_type,
+        reference=reference,
+        performed_by=performed_by
+    )
+    db.session.add(tx)
+    db.session.commit()
+
+# INTEGRATION POINTS:
+# 1. In Material Receipt route:
+#    record_inventory_transaction(material_id, received_quantity, weight, 'IN', po_number, username)
+
+# 2. In Material Issue route:
+#    record_inventory_transaction(material_id, issued_quantity, issued_weight, 'OUT', production_code, username)
+
+# 3. In Production Completion route (not yet created):
+#    record_inventory_transaction(finished_good_material_id, qty_produced, weight, 'IN', production_code, username)
