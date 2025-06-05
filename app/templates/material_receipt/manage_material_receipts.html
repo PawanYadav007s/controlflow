@@ -7,10 +7,7 @@
         <div class="col-auto">
             <input type="text" name="sales_order_number" class="form-control" placeholder="Search by SO Number" value="{{ search_so_number }}">
         </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Search</button>
-            <a href="{{ url_for('material_receipt_routes.manage_material_receipts') }}" class="btn btn-secondary">Reset</a>
-        </div>
+        
         <div class="col-auto">
             <a href="{{ url_for('material_receipt_routes.export_material_receipts_csv') }}" class="btn btn-success">Export CSV</a>
         </div>
