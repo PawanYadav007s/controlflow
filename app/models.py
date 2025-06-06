@@ -22,6 +22,7 @@ class Quotation(db.Model):
 
 class SalesOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    so_number = db.Column(db.String(100), unique=True, nullable=False)  # ✅ ADD THIS
     quotation_id = db.Column(db.Integer, db.ForeignKey('quotation.id'), nullable=False)
     so_date = db.Column(db.Date, nullable=False)
     project_name = db.Column(db.String(150), nullable=False)
@@ -29,7 +30,9 @@ class SalesOrder(db.Model):
     approval_status = db.Column(db.String(20), nullable=False, default='Pending')
     payment_terms = db.Column(db.String(100), nullable=True)
     delivery_schedule = db.Column(db.Date, nullable=True)
+
     quotation = db.relationship('Quotation', backref=db.backref('sales_orders', lazy=True))
+
 
 
 
@@ -78,6 +81,8 @@ class MaterialReceipt(db.Model):
     received_quantity = db.Column(db.Float, nullable=False)
     damaged_quantity = db.Column(db.Float, nullable=False, default=0.0)
     rejected_quantity = db.Column(db.Float, nullable=False, default=0.0)
+    weight = db.Column(db.Float, nullable=True)  # Nullable = optional
+
     remarks = db.Column(db.Text)
 
     created_at = db.Column(

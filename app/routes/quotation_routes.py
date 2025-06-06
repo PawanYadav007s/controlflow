@@ -8,7 +8,11 @@ quotation_routes = Blueprint('quotation_routes', __name__)
 # Show Add Quotation Form
 @quotation_routes.route('/quotations/add', methods=['GET'])
 def add_quotation_form():
-    return render_template('quotation/add_quotation.html')
+    try:
+        return render_template('quotation/add_quotation.html')
+    except Exception as e:
+        flash(f"Error loading form: {str(e)}", "danger")
+        return redirect(url_for('quotation_routes.manage_quotations'))
 
 # Handle Add Quotation Form Submission
 @quotation_routes.route('/quotations/add', methods=['POST'])
@@ -36,17 +40,22 @@ def add_quotation():
 # Manage Quotations (View with pagination/search/etc.)
 @quotation_routes.route('/quotations')
 def manage_quotations():
-    # Get page number from query parameters (default 1)
-    page = request.args.get('page', 1, type=int)
-    # Paginate with 10 items per page (adjust as needed)
-    quotations = Quotation.query.order_by(Quotation.id.desc()).paginate(page=page, per_page=10)
-    return render_template('quotation/manage_quotations.html', quotations=quotations)
-
+    try:
+        page = request.args.get('page', 1, type=int)
+        quotations = Quotation.query.order_by(Quotation.id.desc()).paginate(page=page, per_page=10)
+        return render_template('quotation/manage_quotations.html', quotations=quotations)
+    except Exception as e:
+        flash(f"Error loading quotations: {str(e)}", "danger")
+        return redirect(url_for('quotation_routes.add_quotation_form'))
 
 # Handle Edit Quotation
 @quotation_routes.route('/quotations/edit/<int:id>', methods=['GET', 'POST'])
 def edit_quotation(id):
-    quotation = Quotation.query.get_or_404(id)
+    try:
+        quotation = Quotation.query.get_or_404(id)
+    except Exception as e:
+        flash(f"Quotation not found: {str(e)}", "danger")
+        return redirect(url_for('quotation_routes.manage_quotations'))
 
     if request.method == 'POST':
         try:
@@ -56,7 +65,6 @@ def edit_quotation(id):
             quotation.project_description = request.form['project_description']
             quotation.estimated_cost = request.form['estimated_cost']
             quotation.status = request.form['status']
-
 
             try:
                 quotation.quotation_date = datetime.strptime(request.form['quotation_date'], '%Y-%m-%d').date()
@@ -72,11 +80,11 @@ def edit_quotation(id):
             flash(f'Error updating quotation: {str(e)}', 'danger')
             return redirect(url_for('quotation_routes.edit_quotation', id=id))
 
-    # GET request: render the form with existing data
-    return render_template('quotation/edit_quotation.html', quotation=quotation)
-
-
-
+    try:
+        return render_template('quotation/edit_quotation.html', quotation=quotation)
+    except Exception as e:
+        flash(f"Error rendering edit form: {str(e)}", "danger")
+        return redirect(url_for('quotation_routes.manage_quotations'))
 
 # Handle Delete Quotation
 @quotation_routes.route('/quotations/delete/<int:id>', methods=['POST'])

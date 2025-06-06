@@ -43,7 +43,14 @@
             <td>{{ inv.material.name }}</td>
             <td>{{ inv.location.name }}</td>
             <td>{{ inv.quantity }}</td>
-            <td>{{ inv.weight }}</td>
+            <td>
+    {% if inv.weight is not none %}
+        {{ inv.weight }}
+    {% else %}
+        Not Applicable
+    {% endif %}
+</td>
+
         </tr>
         {% else %}
         <tr>

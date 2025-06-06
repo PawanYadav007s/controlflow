@@ -20,13 +20,18 @@
     <div class="col-md-6">
       <label class="form-label">Sales Order Date</label>
       <input type="date" class="form-control" name="so_date" value="{{ sales_order.so_date.strftime('%Y-%m-%d') }}" required>
-
     </div>
   </div>
 
-  <div class="mb-3">
-    <label class="form-label">Project Name</label>
-    <input type="text" class="form-control" name="project_name" value="{{ sales_order.project_name }}" required>
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <label class="form-label">Sales Order Number</label>
+      <input type="text" class="form-control" name="so_number" value="{{ sales_order.so_number }}" required>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Project Name</label>
+      <input type="text" class="form-control" name="project_name" value="{{ sales_order.project_name }}" required>
+    </div>
   </div>
 
   <div class="mb-3">
@@ -58,8 +63,8 @@
   <a href="{{ url_for('sales_order_routes.manage_sales_orders') }}" class="btn btn-secondary ms-2">Back</a>
 </form>
 
- <div class="text-center mt-3">
-                    <a href="{{ url_for('base_routes.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
-                </div>
+<div class="text-center mt-3">
+  <a href="{{ url_for('base_routes.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+</div>
 
 {% endblock %}

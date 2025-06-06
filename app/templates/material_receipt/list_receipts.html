@@ -13,6 +13,7 @@
                 <th>Location</th>
                 <th>Damaged Qty</th>
                 <th>Rejected Qty</th>
+                <th>weight</th>
                 <th>Remarks</th>
                 <th>Timestamp</th>
                 <th>Actions</th>
@@ -25,6 +26,13 @@
                 <td>{{ receipt.location.name }}</td>
                 <td>{{ receipt.damaged_quantity }}</td>
                 <td>{{ receipt.rejected_quantity }}</td>
+                <td>
+            {% if receipt.weight is not none %}
+                {{ receipt.weight }}
+            {% else %}
+                Not Applicable
+            {% endif %}
+        </td>
                 <td>{{ receipt.remarks }}</td>
                 <td>{{ receipt.created_at.strftime('%Y-%m-%d %H:%M') if receipt.created_at else 'N/A' }}</td>
                 <td>

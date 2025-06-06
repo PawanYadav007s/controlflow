@@ -1,5 +1,3 @@
-
-
 {% extends 'layout.html' %}
 
 {% block title %}Manage Sales Orders | ControlFlow{% endblock %}
@@ -14,6 +12,7 @@
       <thead class="table-light">
         <tr>
           <th>#</th>
+          <th>SO Number</th>
           <th>Quotation Ref</th>
           <th>Project Name</th>
           <th>Approval Status</th>
@@ -26,20 +25,22 @@
         {% for order in sales_orders %}
         <tr>
           <td>{{ loop.index }}</td>
+          <td>{{ order.so_number }}</td>
           <td>{{ order.quotation.quotation_number }}</td>
           <td>{{ order.project_name }}</td>
-          <td><span class="badge bg-{{ 'success' if order.approval_status == 'Approved' else 'warning' if order.approval_status == 'Pending' else 'danger' }}">{{ order.approval_status }}</span></td>
-          <td>{{ order.sales_order_date }}</td>
-          <td>{{ order.delivery_schedule }}</td>
+          <td>
+            <span class="badge bg-{{ 'success' if order.approval_status == 'Approved' else 'warning' if order.approval_status == 'Pending' else 'danger' }}">
+              {{ order.approval_status }}
+            </span>
+          </td>
+          <td>{{ order.so_date.strftime('%Y-%m-%d') if order.so_date }}</td>
+          <td>{{ order.delivery_schedule.strftime('%Y-%m-%d') if order.delivery_schedule }}</td>
           <td>
             <a href="{{ url_for('sales_order_routes.edit_sales_order', id=order.id) }}" class="btn btn-sm btn-primary">Edit</a>
-              <form method="POST" action="{{ url_for('sales_order_routes.delete_sales_order', id=order.id) }}" style="display:inline-block;" onsubmit="return confirm('Are you sure?');">
-            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-          </form>
+            <form method="POST" action="{{ url_for('sales_order_routes.delete_sales_order', id=order.id) }}" style="display:inline-block;" onsubmit="return confirm('Are you sure?');">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
           </td>
-
-         
-
         </tr>
         {% endfor %}
       </tbody>
@@ -47,10 +48,8 @@
   </div>
 </div>
 
-
- <div class="text-center mt-3">
-                    <a href="{{ url_for('base_routes.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
-                </div>
-
+<div class="text-center mt-3">
+  <a href="{{ url_for('base_routes.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+</div>
 
 {% endblock %}

@@ -12,9 +12,9 @@
 
     <!-- Sub-navigation for Production module -->
     <div class="mb-4">
-        <a href="{{ url_for('production.production_orders') }}" class="btn btn-outline-primary me-2">Production Orders</a>
-        <a href="{{ url_for('production.material_issues') }}" class="btn btn-outline-secondary me-2">Material Issues</a>
-        <a href="{{ url_for('production.waste_records') }}" class="btn btn-outline-secondary">Waste Records</a>
+        <a href="{{ url_for('production.production_orders') }}" class="btn {% if active_tab == 'orders' %}btn-primary{% else %}btn-outline-primary{% endif %} me-2">Production Orders</a>
+        <a href="{{ url_for('production.material_issues') }}" class="btn {% if active_tab == 'issues' %}btn-primary{% else %}btn-outline-secondary{% endif %} me-2">Material Issues</a>
+        <a href="{{ url_for('production.waste_records') }}" class="btn {% if active_tab == 'waste' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Waste Records</a>
     </div>
 
     <!-- Filter Form -->
@@ -24,8 +24,8 @@
             <select name="sales_order_id" id="sales_order_id" class="form-select" onchange="this.form.submit()">
                 <option value="">All Sales Orders</option>
                 {% for so in sales_orders %}
-                    <option value="{{ so.id }}" {% if selected_sales_order == so.id %}selected{% endif %}>
-                        SO-{{ so.id }}
+                    <option value="{{ so.id }}" {% if selected_sales_order and selected_sales_order == so.id %}selected{% endif %}>
+                        SO-{{ so.so_number }}
                     </option>
                 {% endfor %}
             </select>
@@ -53,9 +53,9 @@
                     <td>{{ po.planned_quantity }}</td>
                     <td>{{ po.status }}</td>
                     <td>
-                        {{ po.start_date.strftime('%Y-%m-%d') if po.start_date else '' }}
+                        {{ po.start_date.strftime('%Y-%m-%d') if po.start_date else '-' }}
                         -
-                        {{ po.end_date.strftime('%Y-%m-%d') if po.end_date else '' }}
+                        {{ po.end_date.strftime('%Y-%m-%d') if po.end_date else '-' }}
                     </td>
                     <td>
                         <a href="{{ url_for('production.edit_production_order', id=po.id) }}" class="btn btn-sm btn-warning">Edit</a>

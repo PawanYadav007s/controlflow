@@ -1,5 +1,3 @@
-
-
 {% extends 'layout.html' %}
 
 {% block title %}Add Sales Order | ControlFlow{% endblock %}
@@ -23,9 +21,15 @@
     </div>
   </div>
 
-  <div class="mb-3">
-    <label class="form-label">Project Name</label>
-    <input type="text" class="form-control" name="project_name" id="project-name-input" placeholder="Project Name" required>
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <label class="form-label">Sales Order Number</label>
+      <input type="text" class="form-control" name="so_number" placeholder="e.g. SO-2025-001" required>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Project Name</label>
+      <input type="text" class="form-control" name="project_name" id="project-name-input" placeholder="Project Name" required>
+    </div>
   </div>
 
   <div class="mb-3">
@@ -56,10 +60,6 @@
   <a href="{{ url_for('sales_order_routes.manage_sales_orders') }}" class="btn btn-secondary ms-2">Cancel</a>
 </form>
 
-
-
-
-
 <script>
   document.getElementById('quotation-select').addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];
@@ -68,9 +68,8 @@
   });
 </script>
 
-
- <div class="text-center mt-3">
-                    <a href="{{ url_for('base_routes.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
-                </div>
+<div class="text-center mt-3">
+  <a href="{{ url_for('base_routes.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+</div>
 
 {% endblock %}

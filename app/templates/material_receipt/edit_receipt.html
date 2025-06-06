@@ -16,6 +16,16 @@
             <label for="rejected_quantity" class="form-label">Rejected Quantity</label>
             <input type="number" step="0.01" name="rejected_quantity" class="form-control">
         </div>
+
+            <div class="mb-3">
+    <label for="weight" class="form-label">Received Weight (kg)</label>
+    <input type="number" step="0.01" name="weight" class="form-control" 
+           value="{{ receipt.weight if receipt.weight is not none else '' }}"
+           placeholder="Leave blank if not applicable">
+</div>
+
+
+
         <div class="mb-3">
             <label for="location_id" class="form-label">Storage Location</label>
             <select name="location_id" class="form-select" required>

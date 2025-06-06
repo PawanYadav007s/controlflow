@@ -6,11 +6,13 @@
     <form method="post">
         <div class="mb-3">
             <label for="sales_order_id" class="form-label">Sales Order</label>
-            <select name="sales_order_id" class="form-select">
-                {% for so in sales_orders %}
-                    <option value="{{ so.id }}" {% if so.id == po.sales_order_id %}selected{% endif %}>SO-{{ so.id }}</option>
-                {% endfor %}
-            </select>
+    <select name="sales_order_id" id="sales_order_id" class="form-select" required>
+    {% for so in sales_orders %}
+        <option value="{{ so.id }}" {% if so.id == po.sales_order_id %}selected{% endif %}>SO-{{ so.so_number }}</option>
+    {% endfor %}
+</select>
+
+
         </div>
         <div class="mb-3">
             <label for="production_code" class="form-label">Production Code</label>
