@@ -28,6 +28,7 @@
                 <th>Issued Weight</th>
                 <th>Issued By</th>
                 <th>Issue Date</th>
+                <th>Inventory Movements</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -41,6 +42,17 @@
                 <td>{{ mi.issued_by }}</td>
                 <td>{{ mi.issue_date.strftime('%Y-%m-%d') }}</td>
                 <td>
+                    {% set txns = transactions_map.get(mi.id, []) %}
+{% if txns %}
+    {% for tx in txns %}
+        <span class="badge bg-danger">{{ tx.movement_type }} by {{ tx.performed_by }}</span><br>
+    {% endfor %}
+{% else %}
+    <em>No record</em>
+{% endif %}
+
+                </td>
+                <td>
                     <a href="{{ url_for('production.edit_material_issue', id=mi.id) }}" class="btn btn-sm btn-warning">Edit</a>
                     <form action="{{ url_for('production.delete_material_issue', id=mi.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Delete this issue?');">
                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
@@ -48,7 +60,7 @@
                 </td>
             </tr>
             {% else %}
-            <tr><td colspan="7" class="text-center">No material issues found.</td></tr>
+            <tr><td colspan="8" class="text-center">No material issues found.</td></tr>
             {% endfor %}
         </tbody>
     </table>

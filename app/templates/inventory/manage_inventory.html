@@ -16,14 +16,11 @@
         </select>
     </div>
 
-
-     <div class="col-auto">
-            <!-- NEW Report button -->
-           <a href="{{ url_for('location_routes.list_locations') }}" class="btn btn-success">
-                Add Locations for Inventory Materials
-            </a>
-        </div>
-
+    <div class="col-auto">
+        <a href="{{ url_for('location_routes.list_locations') }}" class="btn btn-success">
+            Add Locations for Inventory Materials
+        </a>
+    </div>
 </form>
 
 <table class="table table-bordered table-striped">
@@ -34,6 +31,8 @@
             <th>Location</th>
             <th>Quantity</th>
             <th>Weight</th>
+            <th>Consumed</th>
+            <th>Waste</th>
         </tr>
     </thead>
     <tbody>
@@ -44,17 +43,18 @@
             <td>{{ inv.location.name }}</td>
             <td>{{ inv.quantity }}</td>
             <td>
-    {% if inv.weight is not none %}
-        {{ inv.weight }}
-    {% else %}
-        Not Applicable
-    {% endif %}
-</td>
-
+                {% if inv.weight is not none %}
+                    {{ inv.weight }}
+                {% else %}
+                    Not Applicable
+                {% endif %}
+            </td>
+            <td>{{ consumed_map.get(inv.material_id, 0) }}</td>
+            <td>{{ waste_map.get(inv.material_id, 0) }}</td>
         </tr>
         {% else %}
         <tr>
-            <td colspan="5" class="text-center">No inventory data found.</td>
+            <td colspan="7" class="text-center">No inventory data found.</td>
         </tr>
         {% endfor %}
     </tbody>

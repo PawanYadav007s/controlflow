@@ -195,9 +195,27 @@ def delete_material_receipt(receipt_id):
     try:
         receipt = MaterialReceipt.query.get_or_404(receipt_id)
         po = receipt.purchase_order
+
+        # Step 1: Restore inventory
+        inventory = Inventory.query.filter_by(
+            material_id=po.material_id,
+            location_id=receipt.location_id
+        ).first()
+
+        if inventory:
+            if inventory.quantity < receipt.received_quantity:
+                flash(f"Cannot delete receipt. Inventory at location '{inventory.location.name}' has insufficient quantity to roll back.", "danger")
+                return redirect(url_for('material_receipt_routes.list_receipts_for_po', po_id=po.id))
+            inventory.quantity -= receipt.received_quantity
+        else:
+            flash("Inventory record not found for rollback.", "danger")
+            return redirect(url_for('material_receipt_routes.list_receipts_for_po', po_id=po.id))
+
+        # Step 2: Delete the receipt
         db.session.delete(receipt)
         db.session.commit()
 
+        # Step 3: Recalculate PO status
         total_received = sum(r.received_quantity for r in po.material_receipts)
         if total_received >= po.quantity:
             po.status = 'Received'
@@ -207,7 +225,8 @@ def delete_material_receipt(receipt_id):
             po.status = 'Partially Received'
 
         db.session.commit()
-        flash('Material receipt deleted successfully.', 'success')
+        flash('Material receipt deleted and inventory updated.', 'success')
+
     except Exception as e:
         db.session.rollback()
         flash(f"Error deleting material receipt: {str(e)}", "danger")

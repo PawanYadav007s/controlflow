@@ -24,6 +24,18 @@ def record_inventory_transaction(material_id, quantity, weight, movement_type, r
         flash(f"Failed to record inventory transaction: {str(e)}", "danger")
 
 
+def delete_inventory_transaction(reference_type, reference_id):
+    try:
+        tx = InventoryTransaction.query.filter_by(reference=reference_type + ':' + str(reference_id)).first()
+        if tx:
+            db.session.delete(tx)
+            db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Failed to delete inventory transaction: {str(e)}", "danger")
+
+
+
 @production_bp.route('/')
 def production_orders():
     try:
@@ -110,13 +122,13 @@ def edit_production_order(id):
     po = ProductionOrder.query.get_or_404(id)
     if request.method == 'POST':
         try:
-            so_number = request.form.get('so_number', '').strip()
-            sales_order = SalesOrder.query.filter_by(so_number=so_number).first()
+            sales_order_id = request.form.get('sales_order_id', type=int)
+            sales_order = SalesOrder.query.get(sales_order_id)
             if not sales_order:
-                flash(f"Sales Order with number '{so_number}' not found.", "danger")
+                flash(f"Sales Order with ID '{sales_order_id}' not found.", "danger")
                 return redirect(url_for('production.edit_production_order', id=id))
 
-            po.sales_order_id = sales_order.id
+            po.sales_order_id = sales_order_id
             po.production_code = request.form.get('production_code')
             po.material_id = request.form.get('material_id', type=int)
             po.planned_quantity = request.form.get('planned_quantity', type=float)
@@ -138,6 +150,7 @@ def edit_production_order(id):
     sales_orders = SalesOrder.query.all()
     materials = Material.query.all()
     return render_template('production/edit_production_order.html', po=po, sales_orders=sales_orders, materials=materials)
+
 
 
 @production_bp.route('/<int:id>/delete', methods=['POST'])
@@ -162,11 +175,23 @@ def material_issues():
             query = query.filter_by(production_order_id=production_order_id)
         issues = query.all()
 
+        # Load related inventory transactions for each issue
+        transactions_map = {}
+        for mi in issues:
+            ref = f"Material Issue ID-{mi.id}"
+            txns = InventoryTransaction.query.filter_by(reference=ref).order_by(InventoryTransaction.timestamp).all()
+            transactions_map[mi.id] = txns
+
         production_orders = ProductionOrder.query.all()
         materials = Material.query.all()
-        return render_template('production/material_issues.html', issues=issues,
-                               production_orders=production_orders, materials=materials,
-                               selected_production_order=production_order_id)
+        return render_template(
+            'production/material_issues.html',
+            issues=issues,
+            production_orders=production_orders,
+            materials=materials,
+            selected_production_order=production_order_id,
+            transactions_map=transactions_map
+        )
     except Exception as e:
         flash(f"Error loading material issues: {str(e)}", "danger")
         return redirect(url_for('production.material_issues'))
@@ -205,9 +230,19 @@ def create_material_issue():
             )
             db.session.add(mi)
             inv.quantity -= issued_quantity
+            db.session.flush()  # ensures mi.id is available
+
+            record_inventory_transaction(
+                material_id,
+                issued_quantity,
+                issued_weight,
+                'OUT',
+                f"Material Issue ID-{mi.id}",
+                issued_by
+            )
+
             db.session.commit()
 
-            record_inventory_transaction(material_id, issued_quantity, issued_weight, 'OUT', f"Material Issue for PO-{production_order_id}", issued_by)
             flash("Material Issue recorded successfully.", "success")
             return redirect(url_for('production.material_issues'))
         except Exception as e:
@@ -220,19 +255,26 @@ def create_material_issue():
     return render_template('production/create_material_issue.html', production_orders=production_orders, materials=materials)
 
 
+
 @production_bp.route('/material_issues/<int:id>/edit', methods=['GET', 'POST'])
 def edit_material_issue(id):
     mi = MaterialIssue.query.get_or_404(id)
+
     if request.method == 'POST':
         try:
             old_quantity = mi.issued_quantity
             old_material_id = mi.material_id
 
+            # Parse new values
             mi.production_order_id = request.form.get('production_order_id', type=int)
             mi.material_id = request.form.get('material_id', type=int)
             mi.issued_quantity = request.form.get('issued_quantity', type=float)
             mi.issued_weight = request.form.get('issued_weight', type=float, default=0)
             mi.issued_by = request.form.get('issued_by')
+
+            issue_date_str = request.form.get('issue_date')
+            if issue_date_str:
+                mi.issue_date = datetime.strptime(issue_date_str, '%Y-%m-%d')
 
             new_quantity = mi.issued_quantity
             new_material_id = mi.material_id
@@ -240,6 +282,7 @@ def edit_material_issue(id):
             inv_old = Inventory.query.filter_by(material_id=old_material_id).first()
             inv_new = Inventory.query.filter_by(material_id=new_material_id).first()
 
+            # Handle inventory adjustments
             if old_material_id == new_material_id:
                 diff = new_quantity - old_quantity
                 if diff > 0 and inv_old and inv_old.quantity < diff:
@@ -256,9 +299,24 @@ def edit_material_issue(id):
                         return redirect(url_for('production.edit_material_issue', id=id))
                     inv_new.quantity -= new_quantity
 
+            # Delete old inventory transaction
+            delete_inventory_transaction('MaterialIssue', mi.id)
+
+            # Record new transaction
+            reference = f"MaterialIssue:{mi.id}"
+            record_inventory_transaction(
+                material_id=new_material_id,
+                quantity=new_quantity,
+                weight=mi.issued_weight,
+                movement_type='OUT',
+                reference=reference,
+                performed_by=mi.issued_by
+            )
+
             db.session.commit()
             flash("Material Issue updated.", "success")
             return redirect(url_for('production.material_issues'))
+
         except Exception as e:
             db.session.rollback()
             flash(f"Error updating material issue: {str(e)}", "danger")
@@ -266,16 +324,21 @@ def edit_material_issue(id):
 
     production_orders = ProductionOrder.query.all()
     materials = Material.query.all()
-    return render_template('production/edit_material_issue.html', mi=mi, production_orders=production_orders, materials=materials)
+    return render_template('production/edit_material_issue.html', issue=mi, production_orders=production_orders, materials=materials)
 
 
 @production_bp.route('/material_issues/<int:id>/delete', methods=['POST'])
 def delete_material_issue(id):
     try:
         mi = MaterialIssue.query.get_or_404(id)
+
+        # Restore inventory
         inv = Inventory.query.filter_by(material_id=mi.material_id).first()
         if inv:
             inv.quantity += mi.issued_quantity
+
+        # Delete inventory transaction
+        delete_inventory_transaction('MaterialIssue', mi.id)
 
         db.session.delete(mi)
         db.session.commit()
@@ -283,7 +346,9 @@ def delete_material_issue(id):
     except Exception as e:
         db.session.rollback()
         flash(f"Error deleting material issue: {str(e)}", "danger")
+
     return redirect(url_for('production.material_issues'))
+
 
 
 @production_bp.route('/waste_records')

@@ -23,7 +23,6 @@
         <thead class="table-light">
             <tr>
                 <th>Production Order</th>
-                <th>Waste Type</th>
                 <th>Waste Weight</th>
                 <th>Waste Date</th>
                 <th>Actions</th>
@@ -33,7 +32,6 @@
             {% for wr in waste_records %}
             <tr>
                 <td>{{ wr.production_order.production_code }}</td>
-                <td>{{ wr.waste_type }}</td>
                 <td>{{ wr.waste_weight }}</td>
                 <td>{{ wr.recorded_on.strftime('%Y-%m-%d') }}</td>
 
